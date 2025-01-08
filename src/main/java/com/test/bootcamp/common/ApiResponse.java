@@ -1,4 +1,4 @@
-package com.test.bootcamp.util.dto;
+package com.test.bootcamp.common;
 
 import lombok.Builder;
 import lombok.Getter;
