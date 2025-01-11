@@ -1,14 +1,18 @@
-package com.test.bootcamp.domain.orderItem.entity;
+package com.test.bootcamp.domain.order.entity;
 
 import com.test.bootcamp.domain.order.entity.Order;
 import com.test.bootcamp.domain.product.entity.Product;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -33,5 +37,18 @@ public class OrderItem {
     @Column
     private BigDecimal price;
 
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
+    @Column
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    @Builder
+    public OrderItem(Order order, Product product, BigDecimal price) {
+        this.order = order;
+        this.product = product;
+        this.price = price;
+    }
 }
