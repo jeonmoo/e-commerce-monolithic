@@ -5,8 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -34,11 +38,21 @@ public class User {
     @Column(length = 30)
     private String email;
 
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column
+    private LocalDateTime updatedAt;
+
     @Builder
-    public User(String userName, String password, String phoneNumber, String email) {
+    public User(String userName, String password, String phoneNumber, String email, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.userName = userName;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.email = email;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }
