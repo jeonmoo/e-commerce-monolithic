@@ -26,6 +26,7 @@ public class User {
     private Long id;
 
     @Column(length = 20)
+    @Enumerated(EnumType.STRING)
     private Rule rule;
 
     @Column(nullable = false, length = 50)
