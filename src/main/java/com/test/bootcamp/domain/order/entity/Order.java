@@ -1,7 +1,6 @@
 package com.test.bootcamp.domain.order.entity;
 
 import com.test.bootcamp.domain.order.OrderStatus;
-import com.test.bootcamp.domain.product.entity.Product;
 import com.test.bootcamp.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
