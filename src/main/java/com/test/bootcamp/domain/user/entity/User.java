@@ -1,5 +1,6 @@
 package com.test.bootcamp.domain.user.entity;
 
+import com.test.bootcamp.domain.order.entity.Order;
 import com.test.bootcamp.domain.user.enums.Rule;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -28,6 +30,9 @@ public class User {
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
     private Rule rule;
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
 
     @Column(nullable = false, length = 50)
     private String userName;
