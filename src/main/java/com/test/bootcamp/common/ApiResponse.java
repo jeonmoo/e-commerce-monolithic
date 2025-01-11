@@ -35,8 +35,12 @@ public class ApiResponse<T> {
         return ResponseEntity.ok(new ApiResponse<>(true, null, null, result));
     }
 
-    public static <T> ResponseEntity<ApiResponse<T>> fail(T result) {
-        return ResponseEntity.ok(new ApiResponse<>(false, null, null, null));
+    public static <T> ResponseEntity<ApiResponse<T>> fail(String errorCode, String errorMessage) {
+        return ResponseEntity.ok(new ApiResponse<>(false, errorCode, errorMessage, null));
+    }
+
+    public static <T> ResponseEntity<ApiResponse<T>> serverException(String errorCode, String errorMessage) {
+        return ResponseEntity.status(200).body(new ApiResponse<>(false, errorCode, errorMessage, null));
     }
 
 }
