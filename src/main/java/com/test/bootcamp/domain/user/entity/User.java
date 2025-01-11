@@ -1,5 +1,6 @@
 package com.test.bootcamp.domain.user.entity;
 
+import com.test.bootcamp.domain.user.enums.Rule;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 20)
+    private Rule rule;
 
     @Column(nullable = false, length = 50)
     private String userName;
