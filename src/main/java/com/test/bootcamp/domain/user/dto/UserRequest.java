@@ -8,13 +8,11 @@ import lombok.Getter;
 @Getter
 public class UserRequest {
 
-    private Long id;
-
     @Size(max = 50, message = "최대 50자 이하여야 합니다.")
     @NotBlank
     private String userName;
 
-    @Size(min = 8,max = 20, message = "다시 확인해주세요.")
+    @Size(min = 4,max = 20, message = "비밀번호는 4~20자 입니다.")
     private String password;
 
     @Size(min = 10, max = 20, message = "10 ~ 20 자 입니다.")

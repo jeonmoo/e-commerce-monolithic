@@ -1,10 +1,10 @@
 package com.test.bootcamp.domain.user.enums;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public enum Rule {
 
     ADMIN("ADMIN", "관리자"),

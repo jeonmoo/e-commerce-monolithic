@@ -1,7 +1,5 @@
 package com.test.bootcamp.domain.order.dto;
 
-import com.test.bootcamp.domain.order.OrderStatus;
-import com.test.bootcamp.domain.order.entity.Order;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -10,18 +8,15 @@ import java.util.List;
 @Getter
 public class OrderRequest {
 
-    private Long id;
     private List<OrderItem> orderItems;
-    private OrderStatus orderStatus;
+    private Long userId;
     private String address;
-    private BigDecimal totalPrice;
 
     @Getter
     public static class OrderItem {
-        private Long id;
-        private Order order;
         private Long productId;
         private BigDecimal price;
+        private Integer quantity;
     }
 
 }

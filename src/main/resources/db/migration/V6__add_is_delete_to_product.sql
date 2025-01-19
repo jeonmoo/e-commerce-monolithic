@@ -1,0 +1,4 @@
+ALTER TABLE product
+    ADD COLUMN is_delete TINYINT NOT NULL DEFAULT 0,
+    ADD COLUMN category_id BIGINT NOT NULL;
+

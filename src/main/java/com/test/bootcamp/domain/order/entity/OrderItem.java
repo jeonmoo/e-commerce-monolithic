@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -25,16 +26,21 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @JoinColumn(name = "order_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
     @Column
     private BigDecimal price;
+
+    @Column
+    private Integer quantity;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -45,9 +51,10 @@ public class OrderItem {
     private LocalDateTime updatedAt;
 
     @Builder
-    public OrderItem(Order order, Product product, BigDecimal price) {
+    public OrderItem(Order order, Product product, BigDecimal price, Integer quantity) {
         this.order = order;
         this.product = product;
         this.price = price;
+        this.quantity = quantity;
     }
 }

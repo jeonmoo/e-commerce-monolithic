@@ -1,6 +1,7 @@
 package com.test.bootcamp.domain.user.controller;
 
 import com.test.bootcamp.common.ApiResponse;
+import com.test.bootcamp.domain.order.dto.OrderResponse;
 import com.test.bootcamp.domain.user.dto.UserRequest;
 import com.test.bootcamp.domain.user.dto.UserResponse;
 import com.test.bootcamp.domain.user.service.UserService;
@@ -8,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,10 +31,16 @@ public class UserController {
         return ApiResponse.success(response);
     }
 
-    @PutMapping
-    public ResponseEntity<ApiResponse<UserResponse>> modifyUser(@Valid @RequestBody UserRequest request) {
-        UserResponse response = userService.modifyUser(request);
+    @PutMapping("/{userId}")
+    public ResponseEntity<ApiResponse<UserResponse>> modifyUser(@PathVariable Long userId, @Valid @RequestBody UserRequest request) {
+        UserResponse response = userService.modifyUser(userId, request);
         return ApiResponse.success(response);
+    }
+
+    @GetMapping("/{userId}/order")
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getOrders(@PathVariable Long userId) {
+        List<OrderResponse> result = userService.getOrderInUser(userId);
+        return ApiResponse.success(result);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.test.bootcamp.domain.order;
+package com.test.bootcamp.domain.order.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum OrderStatus {
     PENDING("PENDING", "주문대기"),
-    CONFIRMED("CONFIRMED", "주문확정")
+    COMPLETE("COMPLETE", "주문완료"),
+    REFUND("REFUND", "주문완료"),
+    CANCELED("CANCELED", "주문취소")
     ;
 
     private final String status;

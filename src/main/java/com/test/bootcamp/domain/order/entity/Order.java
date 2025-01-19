@@ -1,11 +1,12 @@
 package com.test.bootcamp.domain.order.entity;
 
-import com.test.bootcamp.domain.order.OrderStatus;
+import com.test.bootcamp.domain.order.enums.OrderStatus;
 import com.test.bootcamp.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -27,14 +28,17 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "order")
+    @Setter
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private List<OrderItem> orderItems;
 
     @Column
+    @Setter
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
@@ -42,6 +46,7 @@ public class Order {
     private String address;
 
     @Column
+    @Setter
     private BigDecimal totalPrice;
 
     @CreationTimestamp

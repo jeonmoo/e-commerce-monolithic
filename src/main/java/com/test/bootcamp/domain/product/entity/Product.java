@@ -1,13 +1,13 @@
 package com.test.bootcamp.domain.product.entity;
 
+import com.test.bootcamp.domain.category.entity.Category;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.Setter;
+import org.hibernate.annotations.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,11 +24,27 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
+    @JoinColumn(name = "category_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Category category;
+
+    @Setter
     @Column(columnDefinition = "TEXT")
     private String productName;
 
     @Column
+    @Setter
+    private Integer quantity;
+
+    @Setter
+    @Column
     private BigDecimal price;
+
+    @Setter
+    @ColumnDefault("true")
+    @Column(columnDefinition = "TINYINT")
+    private Boolean isDelete;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -39,8 +55,11 @@ public class Product {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Product(String productName, BigDecimal price) {
+    public Product(Category category, String productName, Integer quantity, BigDecimal price, Boolean isDelete) {
+        this.category = category;
         this.productName = productName;
+        this.quantity = quantity;
         this.price = price;
+        this.isDelete = isDelete;
     }
 }

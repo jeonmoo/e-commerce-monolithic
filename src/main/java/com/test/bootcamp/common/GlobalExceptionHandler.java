@@ -20,13 +20,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> methodArgumentNotValidException(MethodArgumentNotValidException e) {
+        e.printStackTrace();
         AtomicReference<String> errors = new AtomicReference<>();
         e.getBindingResult().getAllErrors().forEach(error -> errors.set(error.getDefaultMessage()));
         return ApiResponse.fail(e.getStatusCode().toString(), String.valueOf(errors));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> serverException(Exception ex) {
-        return ApiResponse.serverException("SERVER_ERROR", ex.getMessage());
+    public ResponseEntity<?> serverException(Exception e) {
+        e.printStackTrace();
+        return ApiResponse.serverException("SERVER_ERROR", e.getMessage());
     }
 }
