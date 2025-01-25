@@ -5,7 +5,6 @@ import com.test.bootcamp.common.exceptionCode.OrderExceptionCode;
 import com.test.bootcamp.domain.order.dto.OrderRequest;
 import com.test.bootcamp.domain.order.dto.OrderResponse;
 import com.test.bootcamp.domain.order.entity.Order;
-import com.test.bootcamp.domain.order.enums.OrderStatus;
 import com.test.bootcamp.domain.order.mapper.OrderMapper;
 import com.test.bootcamp.domain.order.repository.OrderRepository;
 import com.test.bootcamp.domain.product.entity.Product;
@@ -28,9 +27,7 @@ public class OrderService {
         orderSupportService.checkProductStack(request.getOrderItems(), products);
         orderSupportService.reduceStock(request.getOrderItems(), products);
 
-        Order order = orderSupportService.toOrder(request, products);
-        order.setOrderStatus(OrderStatus.PENDING);
-        orderSupportService.updateTotalPrice(order);
+        Order order = orderSupportService.initOrder(request, products);
         Order savedOrder = orderRepository.save(order);
         orderSupportService.pay(savedOrder);
 

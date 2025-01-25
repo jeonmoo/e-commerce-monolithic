@@ -7,6 +7,7 @@ import com.test.bootcamp.domain.payment.entity.Payment;
 import com.test.bootcamp.domain.payment.enums.PaymentStatus;
 import com.test.bootcamp.domain.payment.mapper.PaymentMapper;
 import com.test.bootcamp.domain.payment.repository.PaymentRepository;
+import com.test.bootcamp.domain.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,11 @@ public class PaymentService {
     public PaymentResponse refund(Long orderId) {
         Payment payment = paymentRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new GlobalException(PaymentExceptionCode.NOT_FOUND_PAYMENT));
+
+        payment.getOrder().getOrderItems().forEach(item -> {
+            Product product = item.getProduct();
+            product.setQuantity(product.getQuantity() + item.getQuantity());
+        });
 
         checkPendingRefund(payment);
         payment.setPaymentStatus(PaymentStatus.REFUND);

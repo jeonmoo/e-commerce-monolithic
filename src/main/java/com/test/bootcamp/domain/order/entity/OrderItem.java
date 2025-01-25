@@ -1,5 +1,6 @@
 package com.test.bootcamp.domain.order.entity;
 
+import com.test.bootcamp.domain.order.enums.DiscountType;
 import com.test.bootcamp.domain.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -37,10 +38,20 @@ public class OrderItem {
     private Product product;
 
     @Column
-    private BigDecimal price;
+    private Integer quantity;
 
     @Column
-    private Integer quantity;
+    private DiscountType discountType;
+
+    @Column
+    private BigDecimal discountValue;
+
+    @Column
+    private BigDecimal originPrice;
+
+    @Setter
+    @Column
+    private BigDecimal finalPrice;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -51,10 +62,14 @@ public class OrderItem {
     private LocalDateTime updatedAt;
 
     @Builder
-    public OrderItem(Order order, Product product, BigDecimal price, Integer quantity) {
+
+    public OrderItem(Order order, Product product, Integer quantity, DiscountType discountType, BigDecimal discountValue, BigDecimal originPrice, BigDecimal finalPrice) {
         this.order = order;
         this.product = product;
-        this.price = price;
         this.quantity = quantity;
+        this.discountType = discountType;
+        this.discountValue = discountValue;
+        this.originPrice = originPrice;
+        this.finalPrice = finalPrice;
     }
 }

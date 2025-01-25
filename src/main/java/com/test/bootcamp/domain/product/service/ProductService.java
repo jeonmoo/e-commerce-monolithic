@@ -7,8 +7,10 @@ import com.test.bootcamp.domain.category.entity.Category;
 import com.test.bootcamp.domain.category.repository.CategoryRepository;
 import com.test.bootcamp.domain.product.dto.ProductRequest;
 import com.test.bootcamp.domain.product.dto.ProductResponse;
+import com.test.bootcamp.domain.product.dto.ProductSearchRequest;
 import com.test.bootcamp.domain.product.entity.Product;
 import com.test.bootcamp.domain.product.mapper.ProductMapper;
+import com.test.bootcamp.domain.product.repository.ProductQueryRepository;
 import com.test.bootcamp.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductQueryRepository productQueryRepository;
     private final CategoryRepository categoryRepository;
 
     public ProductResponse getProductById(Long id) {
@@ -31,6 +34,13 @@ public class ProductService {
 
     public List<ProductResponse> getProducts() {
         List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(ProductMapper.INSTANCE::toResponse)
+                .toList();
+    }
+
+    public List<ProductResponse> search(ProductSearchRequest request) {
+        List<Product> products = productQueryRepository.search(request);
         return products.stream()
                 .map(ProductMapper.INSTANCE::toResponse)
                 .toList();
@@ -67,7 +77,11 @@ public class ProductService {
                 .orElseThrow(() -> new GlobalException(CategoryExceptionCode.NOT_FOUND_CATEGORY));
         product.setProductName(request.getProductName());
         product.setQuantity(request.getQuantity());
-        product.setPrice(request.getPrice());
+        product.setFinalPrice(request.getFinalPrice());
+        product.setOriginPrice(request.getOriginPrice());
+        product.setDiscountType(request.getDiscountType());
+        product.setDiscountValue(request.getDiscountValue());
+        product.setFinalPrice(request.getFinalPrice());
         product.setCategory(category);
     }
 

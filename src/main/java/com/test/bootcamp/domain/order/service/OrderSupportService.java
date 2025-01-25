@@ -9,6 +9,7 @@ import com.test.bootcamp.domain.order.dto.OrderRequest;
 import com.test.bootcamp.domain.order.dto.OrderResponse;
 import com.test.bootcamp.domain.order.entity.Order;
 import com.test.bootcamp.domain.order.entity.OrderItem;
+import com.test.bootcamp.domain.order.enums.DiscountType;
 import com.test.bootcamp.domain.order.enums.OrderStatus;
 import com.test.bootcamp.domain.order.mapper.OrderItemMapper;
 import com.test.bootcamp.domain.order.mapper.OrderMapper;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
@@ -46,26 +48,35 @@ public class OrderSupportService {
         return orderResponse;
     }
 
-    protected Order toOrder(OrderRequest request, List<Product> products) {
-        Map<Long, Product> productMap = Util.toMap(products, Product::getId);
-
+    protected Order initOrder(OrderRequest request, List<Product> products) {
         Order order = OrderMapper.INSTANCE.toOrder(request);
+        order.setOrderStatus(OrderStatus.PENDING);
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.NOT_FOUND_USER));
         order.setUser(user);
 
-        List<OrderItem> items = request.getOrderItems().stream()
+        List<OrderItem> orderItems = initOrderItem(request, products);
+        orderItems.forEach(item -> item.setOrder(order));
+
+        order.setOrderItems(orderItems);
+        return order;
+    }
+
+    private List<OrderItem> initOrderItem(OrderRequest request, List<Product> products) {
+        Map<Long, Product> productMap = Util.toMap(products, Product::getId);
+        return request.getOrderItems().stream()
                 .map(itemRequest -> {
-                    OrderItem item = OrderItemMapper.INSTANCE.toOrderItem(itemRequest);
                     Product product = productMap.get(itemRequest.getProductId());
-                    item.setProduct(product);
-                    item.setOrder(order);
-                    return item;
+                    return OrderItem.builder()
+                            .quantity(itemRequest.getQuantity())
+                            .discountType(product.getDiscountType())
+                            .discountValue(product.getDiscountValue())
+                            .originPrice(product.getOriginPrice())
+                            .finalPrice(product.getFinalPrice())
+                            .product(product)
+                            .build();
                 })
                 .toList();
-        order.setOrderItems(items);
-
-        return order;
     }
 
     @Transactional
@@ -97,19 +108,26 @@ public class OrderSupportService {
         Payment payment = Payment.builder()
                 .order(order)
                 .paymentStatus(PaymentStatus.PAID)
-                .payAmount(order.getTotalPrice())
+                .payAmount(order.getTotalFinalPrice())
                 .build();
 
         paymentRepository.save(payment);
     }
 
     @Transactional
-    protected void updateTotalPrice(Order order) {
-        BigDecimal totalPrice = order.getOrderItems().stream()
-                .map(OrderItem::getPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    protected void initFinalPrice(Product product) {
+        BigDecimal finalPrice = calculateDiscountPrice(product.getDiscountType(), product.getOriginPrice(), product.getDiscountValue());
+        product.setFinalPrice(finalPrice);
+    }
 
-        order.setTotalPrice(totalPrice);
+    @Transactional
+    protected BigDecimal calculateDiscountPrice(DiscountType discountType, BigDecimal originPrice, BigDecimal discountValue) {
+        BigDecimal resultPrice = BigDecimal.ZERO;
+        switch (discountType) {
+            case AMOUNT -> resultPrice = originPrice.subtract(discountValue);
+            case RATE -> resultPrice = originPrice.subtract(originPrice.multiply(discountValue).divide(BigDecimal.valueOf(100d), RoundingMode.HALF_UP));
+        }
+        return resultPrice;
     }
 
     @Transactional

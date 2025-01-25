@@ -3,6 +3,7 @@ package com.test.bootcamp.domain.product.controller;
 import com.test.bootcamp.common.ApiResponse;
 import com.test.bootcamp.domain.product.dto.ProductRequest;
 import com.test.bootcamp.domain.product.dto.ProductResponse;
+import com.test.bootcamp.domain.product.dto.ProductSearchRequest;
 import com.test.bootcamp.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,12 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<ApiResponse<List<ProductResponse>>> getProducts() {
         List<ProductResponse> result = productService.getProducts();
+        return ApiResponse.success(result);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getProducts(ProductSearchRequest request) {
+        List<ProductResponse> result = productService.search(request);
         return ApiResponse.success(result);
     }
 

@@ -7,6 +7,7 @@ import com.test.bootcamp.domain.category.dto.CategoryResponse;
 import com.test.bootcamp.domain.category.entity.Category;
 import com.test.bootcamp.domain.category.mapper.CategoryMapper;
 import com.test.bootcamp.domain.category.repository.CategoryRepository;
+import com.test.bootcamp.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import java.util.List;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     public List<CategoryResponse> getCategories() {
         List<Category> categories = categoryRepository.findAll();
@@ -50,10 +52,16 @@ public class CategoryService {
     }
 
     @Transactional
-    public void removeCategory(Long categoryId) {
+    public Boolean removeCategory(Long categoryId) {
+        Boolean isCategoryExist = productRepository.existsByCategoryId(categoryId);
+        if (isCategoryExist) {
+            throw new GlobalException(CategoryExceptionCode.CATEGORY_HAS_PRODUCTS);
+        }
+
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new GlobalException(CategoryExceptionCode.NOT_FOUND_CATEGORY));
         category.setIsDelete(true);
+        return category.getIsDelete();
     }
 
 

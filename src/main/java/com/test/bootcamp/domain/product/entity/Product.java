@@ -1,6 +1,7 @@
 package com.test.bootcamp.domain.product.entity;
 
 import com.test.bootcamp.domain.category.entity.Category;
+import com.test.bootcamp.domain.order.enums.DiscountType;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.Builder;
@@ -33,13 +34,25 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String productName;
 
-    @Column
     @Setter
+    @Column
     private Integer quantity;
 
     @Setter
     @Column
-    private BigDecimal price;
+    private BigDecimal finalPrice;
+
+    @Setter
+    @Column
+    private BigDecimal originPrice;
+
+    @Setter
+    @Column
+    private DiscountType discountType;
+
+    @Setter
+    @Column
+    private BigDecimal discountValue;
 
     @Setter
     @ColumnDefault("true")
@@ -55,11 +68,14 @@ public class Product {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Product(Category category, String productName, Integer quantity, BigDecimal price, Boolean isDelete) {
+    public Product(Category category, String productName, Integer quantity, BigDecimal finalPrice, BigDecimal originPrice, DiscountType discountType, BigDecimal discountValue, Boolean isDelete) {
         this.category = category;
         this.productName = productName;
         this.quantity = quantity;
-        this.price = price;
+        this.finalPrice = finalPrice;
+        this.originPrice = originPrice;
+        this.discountType = discountType;
+        this.discountValue = discountValue;
         this.isDelete = isDelete;
     }
 }
