@@ -1,9 +1,9 @@
 package com.test.bootcamp.domain.product.entity;
 
 import com.test.bootcamp.domain.category.entity.Category;
-import com.test.bootcamp.domain.order.enums.DiscountType;
-import jakarta.persistence.*;
+import com.test.bootcamp.domain.discount.entity.Discount;
 import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,12 +47,9 @@ public class Product {
     private BigDecimal originPrice;
 
     @Setter
-    @Column
-    private DiscountType discountType;
-
-    @Setter
-    @Column
-    private BigDecimal discountValue;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_id")
+    private Discount discount;
 
     @Setter
     @ColumnDefault("true")
@@ -68,14 +65,13 @@ public class Product {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Product(Category category, String productName, Integer quantity, BigDecimal finalPrice, BigDecimal originPrice, DiscountType discountType, BigDecimal discountValue, Boolean isDelete) {
+    public Product(Category category, String productName, Integer quantity, BigDecimal finalPrice, BigDecimal originPrice, Discount discount, Boolean isDelete) {
         this.category = category;
         this.productName = productName;
         this.quantity = quantity;
         this.finalPrice = finalPrice;
         this.originPrice = originPrice;
-        this.discountType = discountType;
-        this.discountValue = discountValue;
+        this.discount = discount;
         this.isDelete = isDelete;
     }
 }

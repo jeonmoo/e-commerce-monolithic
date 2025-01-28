@@ -1,6 +1,6 @@
 package com.test.bootcamp.domain.order.entity;
 
-import com.test.bootcamp.domain.order.enums.DiscountType;
+import com.test.bootcamp.domain.order.enums.OrderStatus;
 import com.test.bootcamp.domain.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -14,6 +14,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -37,14 +38,12 @@ public class OrderItem {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    @Setter
+    @Column
+    private OrderStatus orderStatus;
+
     @Column
     private Integer quantity;
-
-    @Column
-    private DiscountType discountType;
-
-    @Column
-    private BigDecimal discountValue;
 
     @Column
     private BigDecimal originPrice;
@@ -52,6 +51,12 @@ public class OrderItem {
     @Setter
     @Column
     private BigDecimal finalPrice;
+
+    @Column
+    private BigDecimal discountPrice;
+
+    @OneToMany(mappedBy = "orderItem")
+    private List<OrderItemDiscount> discounts;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -62,14 +67,13 @@ public class OrderItem {
     private LocalDateTime updatedAt;
 
     @Builder
-
-    public OrderItem(Order order, Product product, Integer quantity, DiscountType discountType, BigDecimal discountValue, BigDecimal originPrice, BigDecimal finalPrice) {
+    public OrderItem(Order order, Product product, Integer quantity, BigDecimal originPrice, BigDecimal finalPrice, BigDecimal discountPrice, List<OrderItemDiscount> discounts) {
         this.order = order;
         this.product = product;
         this.quantity = quantity;
-        this.discountType = discountType;
-        this.discountValue = discountValue;
         this.originPrice = originPrice;
         this.finalPrice = finalPrice;
+        this.discountPrice = discountPrice;
+        this.discounts = discounts;
     }
 }

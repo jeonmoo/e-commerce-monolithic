@@ -1,4 +1,4 @@
-package com.test.bootcamp.domain.order.enums;
+package com.test.bootcamp.domain.discount.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum DiscountType {
 
+    COMMON("COMMON", "일반상품할인"),
     AMOUNT("AMOUNT", "정액할인"),
     RATE("RATE", "정률할인"),
     ;

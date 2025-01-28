@@ -2,9 +2,12 @@ package com.test.bootcamp.domain.product.service;
 
 import com.test.bootcamp.common.GlobalException;
 import com.test.bootcamp.common.exceptionCode.CategoryExceptionCode;
+import com.test.bootcamp.common.exceptionCode.DiscountExceptionCode;
 import com.test.bootcamp.common.exceptionCode.ProductExceptionCode;
 import com.test.bootcamp.domain.category.entity.Category;
 import com.test.bootcamp.domain.category.repository.CategoryRepository;
+import com.test.bootcamp.domain.discount.entity.Discount;
+import com.test.bootcamp.domain.discount.repository.DiscountRepository;
 import com.test.bootcamp.domain.product.dto.ProductRequest;
 import com.test.bootcamp.domain.product.dto.ProductResponse;
 import com.test.bootcamp.domain.product.dto.ProductSearchRequest;
@@ -18,13 +21,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
+    private final ProductSupportService productSupportService;
     private final ProductRepository productRepository;
     private final ProductQueryRepository productQueryRepository;
     private final CategoryRepository categoryRepository;
+
+    private final DiscountRepository discountRepository;
 
     public ProductResponse getProductById(Long id) {
         Product product = productRepository.findById(id)
@@ -75,14 +81,26 @@ public class ProductService {
     public void updateProduct(Product product, ProductRequest request) {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new GlobalException(CategoryExceptionCode.NOT_FOUND_CATEGORY));
+
+        Discount discount = discountRepository.findById(request.getDiscountId())
+                .orElseThrow(()  -> new GlobalException(DiscountExceptionCode.NOT_FOUND_DISCOUNT));
+
+        product.setCategory(category);
+        product.setDiscount(discount);
         product.setProductName(request.getProductName());
         product.setQuantity(request.getQuantity());
         product.setFinalPrice(request.getFinalPrice());
         product.setOriginPrice(request.getOriginPrice());
-        product.setDiscountType(request.getDiscountType());
-        product.setDiscountValue(request.getDiscountValue());
         product.setFinalPrice(request.getFinalPrice());
-        product.setCategory(category);
+    }
+
+    @Transactional
+    public ProductResponse applyDiscount(Long productId, ProductRequest request) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new GlobalException(ProductExceptionCode.NOT_FOUND_PRODUCT));
+        productSupportService.initDiscountToProduct(product, request);
+
+        return ProductMapper.INSTANCE.toResponse(product);
     }
 
 }

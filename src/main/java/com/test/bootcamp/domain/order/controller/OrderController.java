@@ -33,4 +33,30 @@ public class OrderController {
         OrderResponse result = orderService.cancelOrder(orderId);
         return ApiResponse.success(result);
     }
+
+    @PostMapping("/{orderId}/refund-request")
+    public ResponseEntity<ApiResponse<OrderResponse>> requiredRefundOrder(@PathVariable Long orderId) {
+        OrderResponse result = orderService.requiredRefundOrder(orderId);
+        return ApiResponse.success(result);
+    }
+
+    @PostMapping("/{orderId}/{orderItemId}/refund-request")
+    public ResponseEntity<ApiResponse<OrderResponse>> requiredRefundOrderItem(@PathVariable Long orderId
+            , @PathVariable Long orderItemId) {
+        OrderResponse result = orderService.requiredRefundOrderItem(orderId);
+        return ApiResponse.success(result);
+    }
+
+    @PostMapping("/{orderId}/refund")
+    public ResponseEntity<ApiResponse<OrderResponse>> refundOrder(@PathVariable Long orderId) {
+        OrderResponse result = orderService.refundOrder(orderId);
+        return ApiResponse.success(result);
+    }
+
+    @PostMapping("/{orderId}/{orderItemId}/refund")
+    public ResponseEntity<ApiResponse<OrderResponse>> refundOrderItem(@PathVariable Long orderId
+            , @PathVariable Long orderItemId) {
+        OrderResponse result = orderService.refundOrderItem(orderId, orderItemId);
+        return ApiResponse.success(result);
+    }
 }

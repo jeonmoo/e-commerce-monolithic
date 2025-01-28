@@ -45,13 +45,17 @@ public class Order {
     @Column(columnDefinition = "TEXT")
     private String address;
 
-    @Column
     @Setter
+    @Column
     private BigDecimal totalFinalPrice;
+
+    @Setter
+    @Column
+    private BigDecimal totalOriginPrice;
 
     @Column
     @Setter
-    private BigDecimal totalOriginPrice;
+    private BigDecimal totalDiscountPrice;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -62,12 +66,13 @@ public class Order {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Order(User user, List<OrderItem> orderItems, OrderStatus orderStatus, String address, BigDecimal totalFinalPrice, BigDecimal totalOriginPrice) {
+    public Order(User user, List<OrderItem> orderItems, OrderStatus orderStatus, String address, BigDecimal totalFinalPrice, BigDecimal totalOriginPrice, BigDecimal totalDiscountPrice) {
         this.user = user;
         this.orderItems = orderItems;
         this.orderStatus = orderStatus;
         this.address = address;
         this.totalFinalPrice = totalFinalPrice;
         this.totalOriginPrice = totalOriginPrice;
+        this.totalDiscountPrice = totalDiscountPrice;
     }
 }

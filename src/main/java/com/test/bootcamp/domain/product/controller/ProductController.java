@@ -54,4 +54,10 @@ public class ProductController {
         productService.removeProduct(productId);
         return ApiResponse.success(null);
     }
+
+    @PostMapping("/{productId}/discount")
+    public ResponseEntity<ApiResponse<Object>> applyDiscount(@PathVariable Long productId, @RequestBody ProductRequest request) {
+        ProductResponse result = productService.applyDiscount(productId, request);
+        return ApiResponse.success(result);
+    }
 }

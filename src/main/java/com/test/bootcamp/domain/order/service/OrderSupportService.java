@@ -9,7 +9,6 @@ import com.test.bootcamp.domain.order.dto.OrderRequest;
 import com.test.bootcamp.domain.order.dto.OrderResponse;
 import com.test.bootcamp.domain.order.entity.Order;
 import com.test.bootcamp.domain.order.entity.OrderItem;
-import com.test.bootcamp.domain.order.enums.DiscountType;
 import com.test.bootcamp.domain.order.enums.OrderStatus;
 import com.test.bootcamp.domain.order.mapper.OrderItemMapper;
 import com.test.bootcamp.domain.order.mapper.OrderMapper;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
@@ -57,8 +55,8 @@ public class OrderSupportService {
 
         List<OrderItem> orderItems = initOrderItem(request, products);
         orderItems.forEach(item -> item.setOrder(order));
-
         order.setOrderItems(orderItems);
+        initPriceInOrder(order);
         return order;
     }
 
@@ -69,8 +67,6 @@ public class OrderSupportService {
                     Product product = productMap.get(itemRequest.getProductId());
                     return OrderItem.builder()
                             .quantity(itemRequest.getQuantity())
-                            .discountType(product.getDiscountType())
-                            .discountValue(product.getDiscountValue())
                             .originPrice(product.getOriginPrice())
                             .finalPrice(product.getFinalPrice())
                             .product(product)
@@ -92,7 +88,7 @@ public class OrderSupportService {
         return products;
     }
 
-    protected void checkProductStack(List<OrderRequest.OrderItem> orderItems, List<Product> products) {
+    protected void checkProductStock(List<OrderRequest.OrderItem> orderItems, List<Product> products) {
         Map<Long, Product> productMap = Util.toMap(products, Product::getId);
         orderItems.forEach(item -> {
             Product product = productMap.get(item.getProductId());
@@ -106,28 +102,31 @@ public class OrderSupportService {
     @Transactional
     protected void pay(Order order) {
         Payment payment = Payment.builder()
-                .order(order)
                 .paymentStatus(PaymentStatus.PAID)
                 .payAmount(order.getTotalFinalPrice())
+                .refundAmount(BigDecimal.ZERO)
                 .build();
 
         paymentRepository.save(payment);
     }
 
     @Transactional
-    protected void initFinalPrice(Product product) {
-        BigDecimal finalPrice = calculateDiscountPrice(product.getDiscountType(), product.getOriginPrice(), product.getDiscountValue());
-        product.setFinalPrice(finalPrice);
-    }
+    protected void initPriceInOrder(Order order) {
+        BigDecimal totalOriginPrice = order.getOrderItems().stream()
+                .map(OrderItem::getOriginPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-    @Transactional
-    protected BigDecimal calculateDiscountPrice(DiscountType discountType, BigDecimal originPrice, BigDecimal discountValue) {
-        BigDecimal resultPrice = BigDecimal.ZERO;
-        switch (discountType) {
-            case AMOUNT -> resultPrice = originPrice.subtract(discountValue);
-            case RATE -> resultPrice = originPrice.subtract(originPrice.multiply(discountValue).divide(BigDecimal.valueOf(100d), RoundingMode.HALF_UP));
-        }
-        return resultPrice;
+        BigDecimal totalDiscountPrice = order.getOrderItems().stream()
+                .map(OrderItem::getDiscountPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalFinalPrice = order.getOrderItems().stream()
+                .map(OrderItem::getFinalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        order.setTotalOriginPrice(totalOriginPrice);
+        order.setTotalDiscountPrice(totalDiscountPrice);
+        order.setTotalFinalPrice(totalFinalPrice);
     }
 
     @Transactional
@@ -141,7 +140,7 @@ public class OrderSupportService {
     }
 
     @Transactional
-    protected void orderComplete(Order order) {
+    protected void completeOrder(Order order) {
         order.setOrderStatus(OrderStatus.COMPLETE);
     }
 
@@ -155,5 +154,47 @@ public class OrderSupportService {
         if (!OrderStatus.PENDING.equals(status)) {
             throw new GlobalException(OrderExceptionCode.NOT_PENDING);
         }
+    }
+
+    protected void checkOrderRefundRequest(Order order) {
+        OrderStatus status = order.getOrderStatus();
+        if (!OrderStatus.COMPLETE.equals(status) && !OrderStatus.PARTIALLY_REFUNDED.equals(status)) {
+            throw new GlobalException(OrderExceptionCode.INVALID_REFUND_REQUEST);
+        }
+    }
+
+    protected void applyRefundRequestOrder(Order order) {
+        order.setOrderStatus(OrderStatus.REQUIRED_REFUND);
+    }
+
+    protected void applyRefundRequestOrderItem(Order order) {
+        order.getOrderItems().forEach(item -> item.setOrderStatus(OrderStatus.PARTIALLY_REQUIRED_REFUND));
+        order.setOrderStatus(OrderStatus.REQUIRED_REFUND);
+    }
+
+    protected void checkRequestRefundOrder(Order order) {
+        OrderStatus status = order.getOrderStatus();
+        if (!OrderStatus.REQUIRED_REFUND.equals(status)) {
+            throw new GlobalException(OrderExceptionCode.NOT_REFUNDABLE_ORDER);
+        }
+    }
+
+    protected void checkRequestRefundOrderItem(OrderItem item) {
+        OrderStatus status = item.getOrderStatus();
+        if (!OrderStatus.PARTIALLY_REQUIRED_REFUND.equals(status)) {
+            throw new GlobalException(OrderExceptionCode.NOT_REFUNDABLE_ORDER_ITEM);
+        }
+    }
+
+    @Transactional
+    protected void refundOrder(Order order) {
+        //TODO: 환불로직 추가
+        order.setOrderStatus(OrderStatus.REFUNDED);
+    }
+
+    @Transactional
+    protected void refundOrderItem(OrderItem item) {
+        //TODO: 부분 환불로직 추가
+        item.setOrderStatus(OrderStatus.REFUNDED);
     }
 }

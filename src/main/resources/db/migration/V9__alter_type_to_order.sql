@@ -1,2 +1,0 @@
-ALTER TABLE orders
-MODIFY COLUMN total_price DECIMAL(20, 6) NOT NULL;

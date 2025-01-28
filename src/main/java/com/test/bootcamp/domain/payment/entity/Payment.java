@@ -1,6 +1,5 @@
 package com.test.bootcamp.domain.payment.entity;
 
-import com.test.bootcamp.domain.order.entity.Order;
 import com.test.bootcamp.domain.payment.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -27,18 +26,25 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @Column
+    private Long orderId;
 
     @Column
-    private BigDecimal payAmount;
+    private Long orderItemId;
 
     @Column
     @Setter
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
+    @Column
+    private BigDecimal payAmount;
+
+    @Setter
+    @Column
+    private BigDecimal refundAmount;
+
+    @Setter
     @Column
     private String reason;
 
@@ -51,10 +57,12 @@ public class Payment {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Payment(Order order, BigDecimal payAmount, PaymentStatus paymentStatus, String reason) {
-        this.order = order;
-        this.payAmount = payAmount;
+    public Payment(Long orderId, Long orderItemId, PaymentStatus paymentStatus, BigDecimal payAmount, BigDecimal refundAmount, String reason) {
+        this.orderId = orderId;
+        this.orderItemId = orderItemId;
         this.paymentStatus = paymentStatus;
+        this.payAmount = payAmount;
+        this.refundAmount = refundAmount;
         this.reason = reason;
     }
 }
