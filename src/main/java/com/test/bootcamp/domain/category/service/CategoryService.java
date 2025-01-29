@@ -38,7 +38,7 @@ public class CategoryService {
     @Transactional
     public CategoryResponse modifyCategory(Long categoryId, CategoryRequest request) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow();
+                .orElseThrow(() -> new GlobalException(CategoryExceptionCode.NOT_FOUND_CATEGORY));
         updateCategory(category, request);
         return CategoryMapper.INSTANCE.toResponse(category);
     }

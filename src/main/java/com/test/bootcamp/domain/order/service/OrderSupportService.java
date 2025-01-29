@@ -163,13 +163,19 @@ public class OrderSupportService {
         }
     }
 
+    protected void checkOrderItemRefundRequest(OrderItem item) {
+        OrderStatus status = item.getOrderStatus();
+        if (!OrderStatus.COMPLETE.equals(status) && !OrderStatus.PARTIALLY_REFUNDED.equals(status)) {
+            throw new GlobalException(OrderExceptionCode.INVALID_REFUND_REQUEST);
+        }
+    }
+
     protected void applyRefundRequestOrder(Order order) {
         order.setOrderStatus(OrderStatus.REQUIRED_REFUND);
     }
 
-    protected void applyRefundRequestOrderItem(Order order) {
-        order.getOrderItems().forEach(item -> item.setOrderStatus(OrderStatus.PARTIALLY_REQUIRED_REFUND));
-        order.setOrderStatus(OrderStatus.REQUIRED_REFUND);
+    protected void applyRefundRequestOrderItem(OrderItem item) {
+        item.setOrderStatus(OrderStatus.PARTIALLY_REQUIRED_REFUND);
     }
 
     protected void checkRequestRefundOrder(Order order) {

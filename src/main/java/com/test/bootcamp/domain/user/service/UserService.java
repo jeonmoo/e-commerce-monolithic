@@ -25,9 +25,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
 
-    public UserResponse getUser(Long userId) {
-        User user = userRepository.findById(userId)
+
+    private User findById(Long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.NOT_FOUND_USER));
+    }
+
+    public UserResponse getUser(Long userId) {
+        User user = findById(userId);
         return UserMapper.INSTANCE.toResponse(user);
     }
 
@@ -41,8 +46,7 @@ public class UserService {
 
     @Transactional
     public UserResponse modifyUser(Long userId, UserRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GlobalException(UserExceptionCode.NOT_FOUND_USER));
+        User user = findById(userId);
 
         user.setEmail(request.getEmail());
         user.setPhoneNumber(request.getPhoneNumber());

@@ -22,6 +22,11 @@ public class OrderService {
     private final OrderSupportService orderSupportService;
     private final OrderRepository orderRepository;
 
+    private Order findOrder(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER));
+    }
+
     @Transactional
     public OrderResponse registerOrder(OrderRequest request) {
         List<Product> products = orderSupportService.getOrderInProduct(request);
@@ -37,8 +42,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse completeOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER));
+        Order order = findOrder(orderId);
 
         orderSupportService.checkOrderPending(order);
         orderSupportService.completeOrder(order);
@@ -47,8 +51,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse cancelOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER));
+        Order order = findOrder(orderId);
 
         orderSupportService.checkOrderPending(order);
         orderSupportService.orderCancel(order);
@@ -57,8 +60,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse requiredRefundOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER));
+        Order order = findOrder(orderId);
 
         orderSupportService.checkOrderRefundRequest(order);
         orderSupportService.applyRefundRequestOrder(order);
@@ -66,19 +68,22 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse requiredRefundOrderItem(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER));
+    public OrderResponse requiredRefundOrderItem(Long orderId, Long orderItemId) {
+        Order order = findOrder(orderId);
 
-        orderSupportService.checkOrderRefundRequest(order);
-        orderSupportService.applyRefundRequestOrderItem(order);
+        OrderItem orderItem = order.getOrderItems().stream()
+                .filter(item -> item.getId().equals(orderItemId))
+                .findFirst()
+                .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER_Item));
+
+        orderSupportService.checkOrderItemRefundRequest(orderItem);
+        orderSupportService.applyRefundRequestOrderItem(orderItem);
         return OrderMapper.INSTANCE.toOrderResponse(order);
     }
 
     @Transactional
     public OrderResponse refundOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER));
+        Order order = findOrder(orderId);
 
         orderSupportService.checkRequestRefundOrder(order);
         orderSupportService.refundOrder(order);
@@ -87,8 +92,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse refundOrderItem(Long orderId, Long orderItemId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER));
+        Order order = findOrder(orderId);
 
         OrderItem orderItem = order.getOrderItems().stream()
                 .filter(item -> item.getId().equals(orderItemId))

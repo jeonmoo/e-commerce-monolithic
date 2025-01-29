@@ -43,7 +43,7 @@ public class OrderController {
     @PostMapping("/{orderId}/{orderItemId}/refund-request")
     public ResponseEntity<ApiResponse<OrderResponse>> requiredRefundOrderItem(@PathVariable Long orderId
             , @PathVariable Long orderItemId) {
-        OrderResponse result = orderService.requiredRefundOrderItem(orderId);
+        OrderResponse result = orderService.requiredRefundOrderItem(orderId, orderItemId);
         return ApiResponse.success(result);
     }
 
