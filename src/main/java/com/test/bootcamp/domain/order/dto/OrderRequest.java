@@ -10,6 +10,7 @@ public class OrderRequest {
     private List<OrderItem> orderItems;
     private Long userId;
     private String address;
+    private String reason;
     @Getter
     public static class OrderItem {
         private Long productId;

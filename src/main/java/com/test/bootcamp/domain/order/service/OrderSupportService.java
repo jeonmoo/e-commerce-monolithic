@@ -145,8 +145,16 @@ public class OrderSupportService {
     }
 
     @Transactional
-    protected void orderCancel(Order order) {
+    protected void cancelOrder(Order order, String reason) {
         order.setOrderStatus(OrderStatus.CANCELED);
+
+        Payment payment = Payment.builder()
+                .paymentStatus(PaymentStatus.CANCELED)
+                .payAmount(order.getTotalFinalPrice())
+                .refundAmount(BigDecimal.ZERO)
+                .reason(reason)
+                .build();
+        paymentRepository.save(payment);
     }
 
     protected void checkOrderPending(Order order) {
@@ -194,13 +202,25 @@ public class OrderSupportService {
 
     @Transactional
     protected void refundOrder(Order order) {
-        //TODO: 환불로직 추가
         order.setOrderStatus(OrderStatus.REFUNDED);
+
+        Payment payment = Payment.builder()
+                .paymentStatus(PaymentStatus.REFUND)
+                .payAmount(order.getTotalFinalPrice())
+                .refundAmount(BigDecimal.ZERO)
+                .build();
+        paymentRepository.save(payment);
     }
 
     @Transactional
     protected void refundOrderItem(OrderItem item) {
-        //TODO: 부분 환불로직 추가
         item.setOrderStatus(OrderStatus.REFUNDED);
+
+        Payment payment = Payment.builder()
+                .paymentStatus(PaymentStatus.REFUND)
+                .payAmount(item.getFinalPrice())
+                .refundAmount(BigDecimal.ZERO)
+                .build();
+        paymentRepository.save(payment);
     }
 }

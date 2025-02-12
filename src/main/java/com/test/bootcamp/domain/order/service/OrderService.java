@@ -4,10 +4,14 @@ import com.test.bootcamp.common.GlobalException;
 import com.test.bootcamp.common.exceptionCode.OrderExceptionCode;
 import com.test.bootcamp.domain.order.dto.OrderRequest;
 import com.test.bootcamp.domain.order.dto.OrderResponse;
+import com.test.bootcamp.domain.order.dto.RefundResponse;
 import com.test.bootcamp.domain.order.entity.Order;
 import com.test.bootcamp.domain.order.entity.OrderItem;
 import com.test.bootcamp.domain.order.mapper.OrderMapper;
 import com.test.bootcamp.domain.order.repository.OrderRepository;
+import com.test.bootcamp.domain.payment.entity.Payment;
+import com.test.bootcamp.domain.payment.enums.PaymentStatus;
+import com.test.bootcamp.domain.payment.repository.PaymentRepository;
 import com.test.bootcamp.domain.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,7 @@ public class OrderService {
 
     private final OrderSupportService orderSupportService;
     private final OrderRepository orderRepository;
+    private final PaymentRepository paymentRepository;
 
     private Order findOrder(Long orderId) {
         return orderRepository.findById(orderId)
@@ -50,16 +55,17 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse cancelOrder(Long orderId) {
+    public OrderResponse cancelOrder(Long orderId, OrderRequest request) {
         Order order = findOrder(orderId);
+        String reason = request.getReason();
 
         orderSupportService.checkOrderPending(order);
-        orderSupportService.orderCancel(order);
+        orderSupportService.cancelOrder(order, reason);
         return OrderMapper.INSTANCE.toOrderResponse(order);
     }
 
     @Transactional
-    public OrderResponse requiredRefundOrder(Long orderId) {
+    public OrderResponse requestRefundOrder(Long orderId) {
         Order order = findOrder(orderId);
 
         orderSupportService.checkOrderRefundRequest(order);
@@ -68,7 +74,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse requiredRefundOrderItem(Long orderId, Long orderItemId) {
+    public OrderResponse requestRefundOrderItem(Long orderId, Long orderItemId) {
         Order order = findOrder(orderId);
 
         OrderItem orderItem = order.getOrderItems().stream()
@@ -102,5 +108,20 @@ public class OrderService {
         orderSupportService.checkRequestRefundOrderItem(orderItem);
         orderSupportService.refundOrderItem(orderItem);
         return OrderMapper.INSTANCE.toOrderResponse(order);
+    }
+
+    @Transactional
+    public List<RefundResponse> getRefunds(Long orderId) {
+        List<Payment> payments = paymentRepository.findByOrderIdAndPaymentStatus(orderId, PaymentStatus.REFUND);
+        return payments.stream()
+                .map(payment -> RefundResponse.builder()
+                        .id(payment.getId())
+                        .refundAmount(payment.getRefundAmount())
+                        .reason(payment.getReason())
+                        .createdAt(payment.getCreatedAt())
+                        .build())
+                .toList();
+
+
     }
 }

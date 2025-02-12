@@ -3,11 +3,14 @@ package com.test.bootcamp.domain.order.controller;
 import com.test.bootcamp.common.ApiResponse;
 import com.test.bootcamp.domain.order.dto.OrderRequest;
 import com.test.bootcamp.domain.order.dto.OrderResponse;
+import com.test.bootcamp.domain.order.dto.RefundResponse;
 import com.test.bootcamp.domain.order.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,21 +32,22 @@ public class OrderController {
     }
 
     @PostMapping("/{orderId}/cancel")
-    public ResponseEntity<ApiResponse<OrderResponse>> cancelOrder(@PathVariable Long orderId) {
-        OrderResponse result = orderService.cancelOrder(orderId);
+    public ResponseEntity<ApiResponse<OrderResponse>> cancelOrder(@PathVariable Long orderId
+            , @RequestBody OrderRequest request) {
+        OrderResponse result = orderService.cancelOrder(orderId, request);
         return ApiResponse.success(result);
     }
 
     @PostMapping("/{orderId}/refund-request")
-    public ResponseEntity<ApiResponse<OrderResponse>> requiredRefundOrder(@PathVariable Long orderId) {
-        OrderResponse result = orderService.requiredRefundOrder(orderId);
+    public ResponseEntity<ApiResponse<OrderResponse>> requestRefundOrder(@PathVariable Long orderId) {
+        OrderResponse result = orderService.requestRefundOrder(orderId);
         return ApiResponse.success(result);
     }
 
     @PostMapping("/{orderId}/{orderItemId}/refund-request")
-    public ResponseEntity<ApiResponse<OrderResponse>> requiredRefundOrderItem(@PathVariable Long orderId
+    public ResponseEntity<ApiResponse<OrderResponse>> requestRefundOrderItem(@PathVariable Long orderId
             , @PathVariable Long orderItemId) {
-        OrderResponse result = orderService.requiredRefundOrderItem(orderId, orderItemId);
+        OrderResponse result = orderService.requestRefundOrderItem(orderId, orderItemId);
         return ApiResponse.success(result);
     }
 
@@ -57,6 +61,12 @@ public class OrderController {
     public ResponseEntity<ApiResponse<OrderResponse>> refundOrderItem(@PathVariable Long orderId
             , @PathVariable Long orderItemId) {
         OrderResponse result = orderService.refundOrderItem(orderId, orderItemId);
+        return ApiResponse.success(result);
+    }
+
+    @GetMapping("/{orderId}/refunds")
+    public ResponseEntity<ApiResponse<List<RefundResponse>>> getRefunds(@PathVariable Long orderId) {
+        List<RefundResponse> result = orderService.getRefunds(orderId);
         return ApiResponse.success(result);
     }
 }
