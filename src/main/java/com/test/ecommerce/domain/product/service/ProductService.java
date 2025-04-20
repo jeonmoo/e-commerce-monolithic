@@ -32,13 +32,13 @@ public class ProductService {
 
     private final DiscountRepository discountRepository;
 
-    private Product findById(Long productId) {
-        return productRepository.findById(productId)
+    private Product findById(Long id) {
+        return productRepository.findById(id)
                 .orElseThrow(() -> new GlobalException(ProductExceptionCode.NOT_FOUND_PRODUCT));
     }
 
-    public ProductResponse getProductById(Long productId) {
-        Product product = findById(productId);
+    public ProductResponse getProductById(Long id) {
+        Product product = findById(id);
         return ProductMapper.INSTANCE.toResponse(product);
     }
 
@@ -67,8 +67,8 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse modifyProduct(Long productId, ProductRequest request) {
-        Product product = findById(productId);
+    public ProductResponse modifyProduct(Long id, ProductRequest request) {
+        Product product = findById(id);
         updateProduct(product, request);
         return ProductMapper.INSTANCE.toResponse(product);
     }
@@ -97,8 +97,8 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse applyDiscount(Long productId, ProductRequest request) {
-        Product product = findById(productId);
+    public ProductResponse applyDiscount(Long id, ProductRequest request) {
+        Product product = findById(id);
         productSupportService.initDiscountToProduct(product, request);
 
         return ProductMapper.INSTANCE.toResponse(product);

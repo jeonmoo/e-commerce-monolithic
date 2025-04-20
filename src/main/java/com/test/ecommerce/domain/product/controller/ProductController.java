@@ -18,9 +18,9 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("/{productId}")
-    public ResponseEntity<ApiResponse<ProductResponse>> getProduct(@PathVariable Long productId) {
-        ProductResponse response = productService.getProductById(productId);
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<ProductResponse>> getProduct(@PathVariable Long id) {
+        ProductResponse response = productService.getProductById(id);
         return ApiResponse.success(response);
     }
 
@@ -42,22 +42,22 @@ public class ProductController {
         return ApiResponse.success(response);
     }
 
-    @PutMapping("/{productId}")
-    public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(@PathVariable Long productId
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(@PathVariable Long id
             , @RequestBody ProductRequest request) {
-        ProductResponse response = productService.modifyProduct(productId, request);
+        ProductResponse response = productService.modifyProduct(id, request);
         return ApiResponse.success(response);
     }
 
-    @DeleteMapping("/{productId}")
-    public ResponseEntity<ApiResponse<Object>> removeProduct(@PathVariable Long productId) {
-        productService.removeProduct(productId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Object>> removeProduct(@PathVariable Long id) {
+        productService.removeProduct(id);
         return ApiResponse.success(null);
     }
 
-    @PostMapping("/{productId}/discount")
-    public ResponseEntity<ApiResponse<Object>> applyDiscount(@PathVariable Long productId, @RequestBody ProductRequest request) {
-        ProductResponse result = productService.applyDiscount(productId, request);
+    @PostMapping("/{id}/discount")
+    public ResponseEntity<ApiResponse<Object>> applyDiscount(@PathVariable Long id, @RequestBody ProductRequest request) {
+        ProductResponse result = productService.applyDiscount(id, request);
         return ApiResponse.success(result);
     }
 }
