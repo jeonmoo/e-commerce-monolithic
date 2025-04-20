@@ -29,16 +29,16 @@ public class CategoryController {
         return ApiResponse.success(result);
     }
 
-    @PutMapping("/{categoryId}")
-    public ResponseEntity<ApiResponse<CategoryResponse>> updateCategory(@PathVariable Long categoryId,
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<CategoryResponse>> updateCategory(@PathVariable Long id,
                                                                         @RequestBody CategoryRequest request) {
-        CategoryResponse result = categoryService.modifyCategory(categoryId, request);
+        CategoryResponse result = categoryService.modifyCategory(id, request);
         return ApiResponse.success(result);
     }
 
-    @DeleteMapping("/{categoryId}")
-    public ResponseEntity<ApiResponse<Object>> removeCategory(@PathVariable Long categoryId) {
-        categoryService.removeCategory(categoryId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Object>> removeCategory(@PathVariable Long id) {
+        categoryService.removeCategory(id);
         return ApiResponse.success(null);
     }
 

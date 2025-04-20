@@ -36,8 +36,8 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryResponse modifyCategory(Long categoryId, CategoryRequest request) {
-        Category category = categoryRepository.findById(categoryId)
+    public CategoryResponse modifyCategory(Long id, CategoryRequest request) {
+        Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new GlobalException(CategoryExceptionCode.NOT_FOUND_CATEGORY));
         updateCategory(category, request);
         return CategoryMapper.INSTANCE.toResponse(category);
@@ -52,13 +52,13 @@ public class CategoryService {
     }
 
     @Transactional
-    public Boolean removeCategory(Long categoryId) {
-        Boolean isCategoryExist = productRepository.existsByCategoryId(categoryId);
+    public Boolean removeCategory(Long id) {
+        Boolean isCategoryExist = productRepository.existsByCategoryId(id);
         if (isCategoryExist) {
             throw new GlobalException(CategoryExceptionCode.CATEGORY_HAS_PRODUCTS);
         }
 
-        Category category = categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new GlobalException(CategoryExceptionCode.NOT_FOUND_CATEGORY));
         category.setIsDelete(true);
         return category.getIsDelete();
