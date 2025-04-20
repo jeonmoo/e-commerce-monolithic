@@ -26,13 +26,13 @@ public class UserService {
     private final OrderRepository orderRepository;
 
 
-    private User findById(Long userId) {
-        return userRepository.findById(userId)
+    private User findById(Long id) {
+        return userRepository.findById(id)
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.NOT_FOUND_USER));
     }
 
-    public UserResponse getUser(Long userId) {
-        User user = findById(userId);
+    public UserResponse getUser(Long id) {
+        User user = findById(id);
         return UserMapper.INSTANCE.toResponse(user);
     }
 
@@ -45,8 +45,8 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse modifyUser(Long userId, UserRequest request) {
-        User user = findById(userId);
+    public UserResponse modifyUser(Long id, UserRequest request) {
+        User user = findById(id);
 
         user.setEmail(request.getEmail());
         user.setPhoneNumber(request.getPhoneNumber());
@@ -54,8 +54,8 @@ public class UserService {
         return UserMapper.INSTANCE.toResponse(user);
     }
 
-    public List<OrderResponse> getOrderInUser(Long userId) {
-        List<Order> orders = orderRepository.findByUserId(userId);
+    public List<OrderResponse> getOrderInUser(Long id) {
+        List<Order> orders = orderRepository.findByUserId(id);
         return orders.stream()
                 .map(OrderMapper.INSTANCE::toOrderResponse)
                 .toList();

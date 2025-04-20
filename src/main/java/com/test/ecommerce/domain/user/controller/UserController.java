@@ -19,9 +19,9 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<UserResponse>> getUser(@PathVariable Long userId) {
-        UserResponse response = userService.getUser(userId);
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<UserResponse>> getUser(@PathVariable Long id) {
+        UserResponse response = userService.getUser(id);
         return ApiResponse.success(response);
     }
 
@@ -31,15 +31,15 @@ public class UserController {
         return ApiResponse.success(response);
     }
 
-    @PutMapping("/{userId}")
-    public ResponseEntity<ApiResponse<UserResponse>> modifyUser(@PathVariable Long userId, @Valid @RequestBody UserRequest request) {
-        UserResponse response = userService.modifyUser(userId, request);
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<UserResponse>> modifyUser(@PathVariable Long id, @Valid @RequestBody UserRequest request) {
+        UserResponse response = userService.modifyUser(id, request);
         return ApiResponse.success(response);
     }
 
-    @GetMapping("/{userId}/order")
-    public ResponseEntity<ApiResponse<List<OrderResponse>>> getOrders(@PathVariable Long userId) {
-        List<OrderResponse> result = userService.getOrderInUser(userId);
+    @GetMapping("/{id}/order")
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getOrders(@PathVariable Long id) {
+        List<OrderResponse> result = userService.getOrderInUser(id);
         return ApiResponse.success(result);
     }
 
