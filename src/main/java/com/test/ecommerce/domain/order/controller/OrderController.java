@@ -25,48 +25,48 @@ public class OrderController {
         return ApiResponse.success(response);
     }
 
-    @PostMapping("/{orderId}/complete")
-    public ResponseEntity<ApiResponse<OrderResponse>> completeOrder(@PathVariable Long orderId) {
-        OrderResponse result = orderService.completeOrder(orderId);
+    @PostMapping("/{id}/complete")
+    public ResponseEntity<ApiResponse<OrderResponse>> completeOrder(@PathVariable Long id) {
+        OrderResponse result = orderService.completeOrder(id);
         return ApiResponse.success(result);
     }
 
-    @PostMapping("/{orderId}/cancel")
-    public ResponseEntity<ApiResponse<OrderResponse>> cancelOrder(@PathVariable Long orderId
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<ApiResponse<OrderResponse>> cancelOrder(@PathVariable Long id
             , @RequestBody OrderRequest request) {
-        OrderResponse result = orderService.cancelOrder(orderId, request);
+        OrderResponse result = orderService.cancelOrder(id, request);
         return ApiResponse.success(result);
     }
 
-    @PostMapping("/{orderId}/refund-request")
-    public ResponseEntity<ApiResponse<OrderResponse>> requestRefundOrder(@PathVariable Long orderId) {
-        OrderResponse result = orderService.requestRefundOrder(orderId);
+    @PostMapping("/{id}/refund-request")
+    public ResponseEntity<ApiResponse<OrderResponse>> requestRefundOrder(@PathVariable Long id) {
+        OrderResponse result = orderService.requestRefundOrder(id);
         return ApiResponse.success(result);
     }
 
-    @PostMapping("/{orderId}/{orderItemId}/refund-request")
-    public ResponseEntity<ApiResponse<OrderResponse>> requestRefundOrderItem(@PathVariable Long orderId
+    @PostMapping("/{id}/{orderItemId}/refund-request")
+    public ResponseEntity<ApiResponse<OrderResponse>> requestRefundOrderItem(@PathVariable Long id
             , @PathVariable Long orderItemId) {
-        OrderResponse result = orderService.requestRefundOrderItem(orderId, orderItemId);
+        OrderResponse result = orderService.requestRefundOrderItem(id, orderItemId);
         return ApiResponse.success(result);
     }
 
-    @PostMapping("/{orderId}/refund")
-    public ResponseEntity<ApiResponse<OrderResponse>> refundOrder(@PathVariable Long orderId) {
-        OrderResponse result = orderService.refundOrder(orderId);
+    @PostMapping("/{id}/refund")
+    public ResponseEntity<ApiResponse<OrderResponse>> refundOrder(@PathVariable Long id) {
+        OrderResponse result = orderService.refundOrder(id);
         return ApiResponse.success(result);
     }
 
-    @PostMapping("/{orderId}/{orderItemId}/refund")
-    public ResponseEntity<ApiResponse<OrderResponse>> refundOrderItem(@PathVariable Long orderId
+    @PostMapping("/{id}/{orderItemId}/refund")
+    public ResponseEntity<ApiResponse<OrderResponse>> refundOrderItem(@PathVariable Long id
             , @PathVariable Long orderItemId) {
-        OrderResponse result = orderService.refundOrderItem(orderId, orderItemId);
+        OrderResponse result = orderService.refundOrderItem(id, orderItemId);
         return ApiResponse.success(result);
     }
 
-    @GetMapping("/{orderId}/refunds")
-    public ResponseEntity<ApiResponse<List<RefundResponse>>> getRefunds(@PathVariable Long orderId) {
-        List<RefundResponse> result = orderService.getRefunds(orderId);
+    @GetMapping("/{id}/refunds")
+    public ResponseEntity<ApiResponse<List<RefundResponse>>> getRefunds(@PathVariable Long id) {
+        List<RefundResponse> result = orderService.getRefunds(id);
         return ApiResponse.success(result);
     }
 }

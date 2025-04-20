@@ -27,8 +27,8 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
 
-    private Order findOrder(Long orderId) {
-        return orderRepository.findById(orderId)
+    private Order findOrder(Long id) {
+        return orderRepository.findById(id)
                 .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER));
     }
 
@@ -46,8 +46,8 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse completeOrder(Long orderId) {
-        Order order = findOrder(orderId);
+    public OrderResponse completeOrder(Long id) {
+        Order order = findOrder(id);
 
         orderSupportService.checkOrderPending(order);
         orderSupportService.completeOrder(order);
@@ -55,8 +55,8 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse cancelOrder(Long orderId, OrderRequest request) {
-        Order order = findOrder(orderId);
+    public OrderResponse cancelOrder(Long id, OrderRequest request) {
+        Order order = findOrder(id);
         String reason = request.getReason();
 
         orderSupportService.checkOrderPending(order);
@@ -65,8 +65,8 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse requestRefundOrder(Long orderId) {
-        Order order = findOrder(orderId);
+    public OrderResponse requestRefundOrder(Long id) {
+        Order order = findOrder(id);
 
         orderSupportService.checkOrderRefundRequest(order);
         orderSupportService.applyRefundRequestOrder(order);
@@ -74,8 +74,8 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse requestRefundOrderItem(Long orderId, Long orderItemId) {
-        Order order = findOrder(orderId);
+    public OrderResponse requestRefundOrderItem(Long id, Long orderItemId) {
+        Order order = findOrder(id);
 
         OrderItem orderItem = order.getOrderItems().stream()
                 .filter(item -> item.getId().equals(orderItemId))
@@ -88,8 +88,8 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse refundOrder(Long orderId) {
-        Order order = findOrder(orderId);
+    public OrderResponse refundOrder(Long id) {
+        Order order = findOrder(id);
 
         orderSupportService.checkRequestRefundOrder(order);
         orderSupportService.refundOrder(order);
@@ -97,8 +97,8 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse refundOrderItem(Long orderId, Long orderItemId) {
-        Order order = findOrder(orderId);
+    public OrderResponse refundOrderItem(Long id, Long orderItemId) {
+        Order order = findOrder(id);
 
         OrderItem orderItem = order.getOrderItems().stream()
                 .filter(item -> item.getId().equals(orderItemId))
@@ -111,8 +111,8 @@ public class OrderService {
     }
 
     @Transactional
-    public List<RefundResponse> getRefunds(Long orderId) {
-        List<Payment> payments = paymentRepository.findByOrderIdAndPaymentStatus(orderId, PaymentStatus.REFUND);
+    public List<RefundResponse> getRefunds(Long id) {
+        List<Payment> payments = paymentRepository.findByOrderIdAndPaymentStatus(id, PaymentStatus.REFUND);
         return payments.stream()
                 .map(payment -> RefundResponse.builder()
                         .id(payment.getId())
