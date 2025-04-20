@@ -1,7 +1,6 @@
 package com.test.ecommerce.domain.order.service;
 
 import com.test.ecommerce.common.GlobalException;
-import com.test.ecommerce.common.Util;
 import com.test.ecommerce.common.exceptionCode.OrderExceptionCode;
 import com.test.ecommerce.common.exceptionCode.ProductExceptionCode;
 import com.test.ecommerce.common.exceptionCode.UserExceptionCode;
@@ -26,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -61,7 +62,8 @@ public class OrderSupportService {
     }
 
     private List<OrderItem> initOrderItem(OrderRequest request, List<Product> products) {
-        Map<Long, Product> productMap = Util.toMap(products, Product::getId);
+        Map<Long, Product> productMap = products.stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
         return request.getOrderItems().stream()
                 .map(itemRequest -> {
                     Product product = productMap.get(itemRequest.getProductId());
@@ -89,7 +91,8 @@ public class OrderSupportService {
     }
 
     protected void checkProductStock(List<OrderRequest.OrderItem> orderItems, List<Product> products) {
-        Map<Long, Product> productMap = Util.toMap(products, Product::getId);
+        Map<Long, Product> productMap = products.stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
         orderItems.forEach(item -> {
             Product product = productMap.get(item.getProductId());
             Integer stock = product.getQuantity();
@@ -131,7 +134,8 @@ public class OrderSupportService {
 
     @Transactional
     protected void reduceStock(List<OrderRequest.OrderItem> orderItems, List<Product> products) {
-        Map<Long, Product> productMap = Util.toMap(products, Product::getId);
+        Map<Long, Product> productMap = products.stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
         orderItems.forEach(item -> {
             Product product = productMap.get(item.getProductId());
             Integer newStock = product.getQuantity() - item.getQuantity();
