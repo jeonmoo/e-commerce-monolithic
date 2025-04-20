@@ -4,6 +4,7 @@ import com.test.ecommerce.domain.product.dto.ProductRequest;
 import com.test.ecommerce.domain.product.dto.ProductResponse;
 import com.test.ecommerce.domain.product.entity.Product;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
@@ -12,5 +13,7 @@ public interface ProductMapper {
     ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 
     Product toProduct(ProductRequest request);
+
+    @Mapping(target = "categoryId", source = "category.id")
     ProductResponse toResponse(Product product);
 }

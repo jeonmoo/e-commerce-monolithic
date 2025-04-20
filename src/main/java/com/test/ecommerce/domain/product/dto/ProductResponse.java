@@ -1,7 +1,6 @@
 package com.test.ecommerce.domain.product.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import com.test.ecommerce.domain.category.entity.Category;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 public class ProductResponse {
 
     private Long id;
-    private Category category;
+    private Long categoryId;
     private String productName;
     private Integer quantity;
     private BigDecimal finalPrice;
@@ -24,9 +23,9 @@ public class ProductResponse {
     private LocalDateTime updatedAt;
 
     @QueryProjection
-    public ProductResponse(Long id, Category category, String productName, Integer quantity, BigDecimal finalPrice, BigDecimal originPrice, Long discountId, Boolean isDelete, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ProductResponse(Long id, Long categoryId, String productName, Integer quantity, BigDecimal finalPrice, BigDecimal originPrice, Long discountId, Boolean isDelete, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-        this.category = category;
+        this.categoryId = categoryId;
         this.productName = productName;
         this.quantity = quantity;
         this.finalPrice = finalPrice;
