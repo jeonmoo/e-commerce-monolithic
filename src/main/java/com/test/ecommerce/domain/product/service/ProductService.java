@@ -81,11 +81,19 @@ public class ProductService {
 
     @Transactional
     public void updateProduct(Product product, ProductRequest request) {
-        Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new GlobalException(CategoryExceptionCode.NOT_FOUND_CATEGORY));
+        Long categoryId = request.getCategoryId();
+        Category category = null;
+        if (categoryId != null) {
+            category = categoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new GlobalException(CategoryExceptionCode.NOT_FOUND_CATEGORY));
+        }
 
-        Discount discount = discountRepository.findById(request.getDiscountId())
-                .orElseThrow(()  -> new GlobalException(DiscountExceptionCode.NOT_FOUND_DISCOUNT));
+        Long discountId = request.getDiscountId();
+        Discount discount = null;
+        if (discountId != null) {
+            discount = discountRepository.findById(request.getDiscountId())
+                    .orElseThrow(()  -> new GlobalException(DiscountExceptionCode.NOT_FOUND_DISCOUNT));
+        }
 
         product.setCategory(category);
         product.setDiscount(discount);
