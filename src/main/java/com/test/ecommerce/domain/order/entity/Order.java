@@ -66,10 +66,10 @@ public class Order {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Order(User user, List<OrderItem> orderItems, OrderStatus orderStatus, String address, BigDecimal totalFinalPrice, BigDecimal totalOriginPrice, BigDecimal totalDiscountPrice) {
+    public Order(User user, List<OrderItem> orderItems, String address, BigDecimal totalFinalPrice, BigDecimal totalOriginPrice, BigDecimal totalDiscountPrice) {
         this.user = user;
         this.orderItems = orderItems;
-        this.orderStatus = orderStatus;
+        this.orderStatus = OrderStatus.PENDING;
         this.address = address;
         this.totalFinalPrice = totalFinalPrice;
         this.totalOriginPrice = totalOriginPrice;

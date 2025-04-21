@@ -49,7 +49,6 @@ public class OrderSupportService {
 
     protected Order initOrder(OrderRequest request, List<Product> products) {
         Order order = OrderMapper.INSTANCE.toOrder(request);
-        order.setOrderStatus(OrderStatus.PENDING);
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.NOT_FOUND_USER));
         order.setUser(user);
@@ -70,6 +69,7 @@ public class OrderSupportService {
                     return OrderItem.builder()
                             .quantity(itemRequest.getQuantity())
                             .originPrice(product.getOriginPrice())
+                            .discountPrice(BigDecimal.ZERO)
                             .finalPrice(product.getFinalPrice())
                             .product(product)
                             .build();
@@ -105,6 +105,7 @@ public class OrderSupportService {
     @Transactional
     protected void pay(Order order) {
         Payment payment = Payment.builder()
+                .orderId(order.getId())
                 .paymentStatus(PaymentStatus.PAID)
                 .payAmount(order.getTotalFinalPrice())
                 .refundAmount(BigDecimal.ZERO)

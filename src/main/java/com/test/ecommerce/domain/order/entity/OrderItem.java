@@ -40,6 +40,7 @@ public class OrderItem {
 
     @Setter
     @Column
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     @Column
@@ -67,9 +68,11 @@ public class OrderItem {
     private LocalDateTime updatedAt;
 
     @Builder
-    public OrderItem(Order order, Product product, Integer quantity, BigDecimal originPrice, BigDecimal finalPrice, BigDecimal discountPrice, List<OrderItemDiscount> discounts) {
+
+    public OrderItem(Order order, Product product, OrderStatus orderStatus, Integer quantity, BigDecimal originPrice, BigDecimal finalPrice, BigDecimal discountPrice, List<OrderItemDiscount> discounts) {
         this.order = order;
         this.product = product;
+        this.orderStatus = OrderStatus.PENDING;
         this.quantity = quantity;
         this.originPrice = originPrice;
         this.finalPrice = finalPrice;
