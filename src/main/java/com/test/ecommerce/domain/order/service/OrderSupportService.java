@@ -37,9 +37,9 @@ public class OrderSupportService {
     private final PaymentRepository paymentRepository;
 
     protected OrderResponse toResponse(Order order) {
-        List<OrderResponse.OrderItem> orderItemResponse = order.getOrderItems()
+        List<OrderResponse.OrderResponseItem> orderItemResponse = order.getOrderItems()
                 .stream()
-                .map(OrderItemMapper.INSTANCE::toOrderItemResponse)
+                .map(OrderItemMapper.INSTANCE::toOrderResponseItem)
                 .toList();
 
         OrderResponse orderResponse = OrderMapper.INSTANCE.toOrderResponse(order);
@@ -80,7 +80,7 @@ public class OrderSupportService {
     @Transactional
     protected List<Product> getOrderInProduct(OrderRequest request) {
         List<Long> productIds = request.getOrderItems().stream()
-                .map(OrderRequest.OrderItem::getProductId)
+                .map(OrderRequest.OrderRequestItem::getProductId)
                 .toList();
 
         List<Product> products = productRepository.findByIdIn(productIds);
@@ -90,7 +90,7 @@ public class OrderSupportService {
         return products;
     }
 
-    protected void checkProductStock(List<OrderRequest.OrderItem> orderItems, List<Product> products) {
+    protected void checkProductStock(List<OrderRequest.OrderRequestItem> orderItems, List<Product> products) {
         Map<Long, Product> productMap = products.stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
         orderItems.forEach(item -> {
@@ -133,7 +133,7 @@ public class OrderSupportService {
     }
 
     @Transactional
-    protected void reduceStock(List<OrderRequest.OrderItem> orderItems, List<Product> products) {
+    protected void reduceStock(List<OrderRequest.OrderRequestItem> orderItems, List<Product> products) {
         Map<Long, Product> productMap = products.stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
         orderItems.forEach(item -> {

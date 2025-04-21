@@ -7,12 +7,12 @@ import java.util.List;
 @Getter
 public class OrderRequest {
 
-    private List<OrderItem> orderItems;
+    private List<OrderRequestItem> orderItems;
     private Long userId;
     private String address;
     private String reason;
     @Getter
-    public static class OrderItem {
+    public static class OrderRequestItem {
         private Long productId;
         private Integer quantity;
     }

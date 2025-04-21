@@ -80,7 +80,7 @@ public class OrderService {
         OrderItem orderItem = order.getOrderItems().stream()
                 .filter(item -> item.getId().equals(orderItemId))
                 .findFirst()
-                .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER_Item));
+                .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER_ITEM));
 
         orderSupportService.checkOrderItemRefundRequest(orderItem);
         orderSupportService.applyRefundRequestOrderItem(orderItem);
@@ -103,7 +103,7 @@ public class OrderService {
         OrderItem orderItem = order.getOrderItems().stream()
                 .filter(item -> item.getId().equals(orderItemId))
                 .findFirst()
-                .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER_Item));
+                .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER_ITEM));
 
         orderSupportService.checkRequestRefundOrderItem(orderItem);
         orderSupportService.refundOrderItem(orderItem);

@@ -15,7 +15,7 @@ import java.util.List;
 public class OrderResponse {
 
     private Long id;
-    private List<OrderItem> orderItems;
+    private List<OrderResponseItem> orderItems;
     private OrderStatus orderStatus;
     private String address;
     private BigDecimal totalPrice;
@@ -24,7 +24,7 @@ public class OrderResponse {
 
     @Getter
     @Builder
-    public static class OrderItem {
+    public static class OrderResponseItem {
         private Long id;
         private Long productId;
         private BigDecimal price;
