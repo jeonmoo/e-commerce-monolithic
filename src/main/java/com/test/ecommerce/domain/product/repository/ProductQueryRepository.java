@@ -1,5 +1,6 @@
 package com.test.ecommerce.domain.product.repository;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.test.ecommerce.domain.product.dto.ProductSearchRequest;
@@ -21,16 +22,16 @@ public class ProductQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     public List<Product> getProducts(ProductSearchRequest request) {
-//        OrderSpecifier orderSpecifier = request.getIsPriceAsc() ? product..asc() : product.price.desc();
+        OrderSpecifier<BigDecimal> orderSpecifier = request.getIsPriceAsc() ? product.finalPrice.asc() : product.finalPrice.desc();
         return queryFactory.selectFrom(product)
                 .where(
                         containName(request.getProductName())
                         , betweenFinalPrice(request.getMinPrice(), request.getMaxPrice())
                         , eqCategory(request.getCategoryId())
                 )
-//                .orderBy(
-//                        orderSpecifier
-//                )
+                .orderBy(
+                        orderSpecifier
+                )
                 .fetch();
     }
 
