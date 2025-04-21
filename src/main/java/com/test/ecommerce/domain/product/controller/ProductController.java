@@ -25,14 +25,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ProductResponse>>> getProducts() {
-        List<ProductResponse> result = productService.getProducts();
-        return ApiResponse.success(result);
-    }
-
-    @GetMapping("/search")
     public ResponseEntity<ApiResponse<List<ProductResponse>>> getProducts(ProductSearchRequest request) {
-        List<ProductResponse> result = productService.search(request);
+        List<ProductResponse> result = productService.getProducts(request);
         return ApiResponse.success(result);
     }
 

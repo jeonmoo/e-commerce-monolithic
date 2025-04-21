@@ -42,15 +42,8 @@ public class ProductService {
         return ProductMapper.INSTANCE.toResponse(product);
     }
 
-    public List<ProductResponse> getProducts() {
-        List<Product> products = productRepository.findAll();
-        return products.stream()
-                .map(ProductMapper.INSTANCE::toResponse)
-                .toList();
-    }
-
-    public List<ProductResponse> search(ProductSearchRequest request) {
-        List<Product> products = productQueryRepository.search(request);
+    public List<ProductResponse> getProducts(ProductSearchRequest request) {
+        List<Product> products = productQueryRepository.getProducts(request);
         return products.stream()
                 .map(ProductMapper.INSTANCE::toResponse)
                 .toList();
