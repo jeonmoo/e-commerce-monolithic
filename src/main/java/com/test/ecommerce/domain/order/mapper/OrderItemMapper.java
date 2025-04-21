@@ -11,7 +11,7 @@ public interface OrderItemMapper {
 
     OrderItemMapper INSTANCE = Mappers.getMapper(OrderItemMapper.class);
 
-    OrderItem toOrderItem(OrderRequest.OrderItem request);
+    OrderItem toOrderItem(OrderRequest.OrderRequestItem request);
 
-    OrderResponse.OrderItem toOrderItemResponse(OrderItem orderItem);
+    OrderResponse.OrderResponseItem toOrderResponseItem(OrderItem orderItem);
 }
