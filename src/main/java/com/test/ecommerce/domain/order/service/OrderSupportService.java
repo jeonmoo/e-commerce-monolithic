@@ -211,9 +211,10 @@ public class OrderSupportService {
         order.setOrderStatus(OrderStatus.REFUNDED);
 
         Payment payment = Payment.builder()
+                .orderId(order.getId())
                 .paymentStatus(PaymentStatus.REFUND)
-                .payAmount(order.getTotalFinalPrice())
-                .refundAmount(BigDecimal.ZERO)
+                .payAmount(BigDecimal.ZERO)
+                .refundAmount(order.getTotalFinalPrice())
                 .build();
         paymentRepository.save(payment);
     }
