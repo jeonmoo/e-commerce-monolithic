@@ -191,17 +191,8 @@ public class OrderSupportService {
     }
 
     protected void applyRefundRequestOrderItem(OrderItem item) {
-        item.setOrderStatus(OrderStatus.REFUNDED);
-        item.getOrder().setOrderStatus(OrderStatus.PARTIALLY_REFUNDED);
-
-        Payment payment = Payment.builder()
-                .orderId(item.getOrder().getId())
-                .orderItemId(item.getId())
-                .paymentStatus(PaymentStatus.PARTIALLY_REFUNDED)
-                .payAmount(BigDecimal.ZERO)
-                .refundAmount(item.getFinalPrice())
-                .build();
-        paymentRepository.save(payment);
+        item.setOrderStatus(OrderStatus.REQUIRED_REFUND);
+        item.getOrder().setOrderStatus(OrderStatus.PARTIALLY_REQUIRED_REFUND);
     }
 
     protected void checkRequestRefundOrder(Order order) {
@@ -234,9 +225,10 @@ public class OrderSupportService {
     @Transactional
     protected void refundOrderItem(OrderItem item) {
         item.setOrderStatus(OrderStatus.REFUNDED);
+        item.getOrder().setOrderStatus(OrderStatus.PARTIALLY_REFUNDED);
 
         Payment payment = Payment.builder()
-                .paymentStatus(PaymentStatus.REFUND)
+                .paymentStatus(PaymentStatus.PARTIALLY_REFUNDED)
                 .payAmount(item.getFinalPrice())
                 .refundAmount(BigDecimal.ZERO)
                 .build();
