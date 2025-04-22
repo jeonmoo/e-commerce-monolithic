@@ -4,13 +4,10 @@ import com.test.ecommerce.common.GlobalException;
 import com.test.ecommerce.common.exceptionCode.OrderExceptionCode;
 import com.test.ecommerce.domain.order.dto.OrderRequest;
 import com.test.ecommerce.domain.order.dto.OrderResponse;
-import com.test.ecommerce.domain.order.dto.RefundResponse;
 import com.test.ecommerce.domain.order.entity.Order;
 import com.test.ecommerce.domain.order.entity.OrderItem;
 import com.test.ecommerce.domain.order.mapper.OrderMapper;
 import com.test.ecommerce.domain.order.repository.OrderRepository;
-import com.test.ecommerce.domain.payment.entity.Payment;
-import com.test.ecommerce.domain.payment.enums.PaymentStatus;
 import com.test.ecommerce.domain.payment.repository.PaymentRepository;
 import com.test.ecommerce.domain.product.entity.Product;
 import lombok.RequiredArgsConstructor;
@@ -108,20 +105,5 @@ public class OrderService {
         orderSupportService.checkRequestRefundOrderItem(orderItem);
         orderSupportService.refundOrderItem(orderItem);
         return OrderMapper.INSTANCE.toOrderResponse(order);
-    }
-
-    @Transactional
-    public List<RefundResponse> getRefunds(Long id) {
-        List<Payment> payments = paymentRepository.findByOrderIdAndPaymentStatus(id, PaymentStatus.REFUND);
-        return payments.stream()
-                .map(payment -> RefundResponse.builder()
-                        .id(payment.getId())
-                        .refundAmount(payment.getRefundAmount())
-                        .reason(payment.getReason())
-                        .createdAt(payment.getCreatedAt())
-                        .build())
-                .toList();
-
-
     }
 }

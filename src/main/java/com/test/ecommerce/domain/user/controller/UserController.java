@@ -37,9 +37,15 @@ public class UserController {
         return ApiResponse.success(response);
     }
 
-    @GetMapping("/{id}/order")
+    @GetMapping("/{id}/orders")
     public ResponseEntity<ApiResponse<List<OrderResponse>>> getOrders(@PathVariable Long id) {
         List<OrderResponse> result = userService.getOrderInUser(id);
+        return ApiResponse.success(result);
+    }
+
+    @GetMapping("/{id}/orders/refunds")
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getRefunds(@PathVariable Long id) {
+        List<OrderResponse> result = userService.getRefunds(id);
         return ApiResponse.success(result);
     }
 

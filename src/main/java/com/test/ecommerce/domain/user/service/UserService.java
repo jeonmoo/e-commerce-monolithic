@@ -4,6 +4,7 @@ import com.test.ecommerce.common.GlobalException;
 import com.test.ecommerce.common.exceptionCode.UserExceptionCode;
 import com.test.ecommerce.domain.order.dto.OrderResponse;
 import com.test.ecommerce.domain.order.entity.Order;
+import com.test.ecommerce.domain.order.enums.OrderStatus;
 import com.test.ecommerce.domain.order.mapper.OrderMapper;
 import com.test.ecommerce.domain.order.repository.OrderRepository;
 import com.test.ecommerce.domain.user.dto.UserRequest;
@@ -56,6 +57,13 @@ public class UserService {
 
     public List<OrderResponse> getOrderInUser(Long id) {
         List<Order> orders = orderRepository.findByUserId(id);
+        return orders.stream()
+                .map(OrderMapper.INSTANCE::toOrderResponse)
+                .toList();
+    }
+
+    public List<OrderResponse> getRefunds(Long userId) {
+        List<Order> orders = orderRepository.findByUserIdAndOrderStatus(userId, OrderStatus.REFUNDED);
         return orders.stream()
                 .map(OrderMapper.INSTANCE::toOrderResponse)
                 .toList();

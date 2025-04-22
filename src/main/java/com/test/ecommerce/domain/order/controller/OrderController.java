@@ -3,18 +3,15 @@ package com.test.ecommerce.domain.order.controller;
 import com.test.ecommerce.common.ApiResponse;
 import com.test.ecommerce.domain.order.dto.OrderRequest;
 import com.test.ecommerce.domain.order.dto.OrderResponse;
-import com.test.ecommerce.domain.order.dto.RefundResponse;
 import com.test.ecommerce.domain.order.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/order")
+@RequestMapping("/orders")
 public class OrderController {
 
     private final OrderService orderService;
@@ -61,12 +58,6 @@ public class OrderController {
     public ResponseEntity<ApiResponse<OrderResponse>> refundOrderItem(@PathVariable Long id
             , @PathVariable Long orderItemId) {
         OrderResponse result = orderService.refundOrderItem(id, orderItemId);
-        return ApiResponse.success(result);
-    }
-
-    @GetMapping("/{id}/refunds")
-    public ResponseEntity<ApiResponse<List<RefundResponse>>> getRefunds(@PathVariable Long id) {
-        List<RefundResponse> result = orderService.getRefunds(id);
         return ApiResponse.success(result);
     }
 }
