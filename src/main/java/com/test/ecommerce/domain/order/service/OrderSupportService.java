@@ -147,6 +147,8 @@ public class OrderSupportService {
     @Transactional
     protected void completeOrder(Order order) {
         order.setOrderStatus(OrderStatus.COMPLETE);
+        order.getOrderItems()
+                .forEach(item -> item.setOrderStatus(OrderStatus.COMPLETE));
     }
 
     @Transactional
