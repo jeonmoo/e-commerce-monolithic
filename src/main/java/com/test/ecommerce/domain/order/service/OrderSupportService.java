@@ -154,6 +154,7 @@ public class OrderSupportService {
         order.setOrderStatus(OrderStatus.CANCELED);
 
         Payment payment = Payment.builder()
+                .orderId(order.getId())
                 .paymentStatus(PaymentStatus.CANCELED)
                 .payAmount(order.getTotalFinalPrice())
                 .refundAmount(BigDecimal.ZERO)
