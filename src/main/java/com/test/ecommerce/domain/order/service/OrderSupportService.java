@@ -191,7 +191,17 @@ public class OrderSupportService {
     }
 
     protected void applyRefundRequestOrderItem(OrderItem item) {
-        item.setOrderStatus(OrderStatus.PARTIALLY_REQUIRED_REFUND);
+        item.setOrderStatus(OrderStatus.REFUNDED);
+        item.getOrder().setOrderStatus(OrderStatus.PARTIALLY_REFUNDED);
+
+        Payment payment = Payment.builder()
+                .orderId(item.getOrder().getId())
+                .orderItemId(item.getId())
+                .paymentStatus(PaymentStatus.PARTIALLY_REFUNDED)
+                .payAmount(BigDecimal.ZERO)
+                .refundAmount(item.getFinalPrice())
+                .build();
+        paymentRepository.save(payment);
     }
 
     protected void checkRequestRefundOrder(Order order) {
