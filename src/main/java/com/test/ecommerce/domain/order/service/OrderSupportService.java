@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -180,14 +181,15 @@ public class OrderSupportService {
     }
 
     protected void checkOrderItemRefundRequest(OrderItem item) {
-        OrderStatus status = item.getOrderStatus();
-        if (!OrderStatus.COMPLETE.equals(status) && !OrderStatus.PARTIALLY_REFUNDED.equals(status)) {
+        OrderStatus itemOrderStatus = item.getOrderStatus();
+        if (!OrderStatus.COMPLETE.equals(itemOrderStatus)) {
             throw new GlobalException(OrderExceptionCode.INVALID_REFUND_REQUEST);
         }
     }
 
     protected void applyRefundRequestOrder(Order order) {
         order.setOrderStatus(OrderStatus.REQUIRED_REFUND);
+        order.getOrderItems().forEach(item -> item.setOrderStatus(OrderStatus.REQUIRED_REFUND));
     }
 
     protected void applyRefundRequestOrderItem(OrderItem item) {
@@ -203,8 +205,9 @@ public class OrderSupportService {
     }
 
     protected void checkRequestRefundOrderItem(OrderItem item) {
-        OrderStatus status = item.getOrderStatus();
-        if (!OrderStatus.PARTIALLY_REQUIRED_REFUND.equals(status)) {
+        OrderStatus itemStatus = item.getOrderStatus();
+
+        if (!OrderStatus.REQUIRED_REFUND.equals(itemStatus)) {
             throw new GlobalException(OrderExceptionCode.NOT_REFUNDABLE_ORDER_ITEM);
         }
     }
@@ -212,6 +215,7 @@ public class OrderSupportService {
     @Transactional
     protected void refundOrder(Order order) {
         order.setOrderStatus(OrderStatus.REFUNDED);
+        order.getOrderItems().forEach(item -> item.setOrderStatus(OrderStatus.REFUNDED));
 
         Payment payment = Payment.builder()
                 .orderId(order.getId())
@@ -225,9 +229,20 @@ public class OrderSupportService {
     @Transactional
     protected void refundOrderItem(OrderItem item) {
         item.setOrderStatus(OrderStatus.REFUNDED);
-        item.getOrder().setOrderStatus(OrderStatus.PARTIALLY_REFUNDED);
+
+        Order order = item.getOrder();
+        Set<OrderStatus> orderStatusSet = order.getOrderItems().stream()
+                        .map(OrderItem::getOrderStatus)
+                                .collect(Collectors.toSet());
+        if (orderStatusSet.size() == 1 && orderStatusSet.contains(OrderStatus.REFUNDED)) {
+            order.setOrderStatus(OrderStatus.REFUNDED);
+        } else {
+            item.getOrder().setOrderStatus(OrderStatus.PARTIALLY_REFUNDED);
+        }
 
         Payment payment = Payment.builder()
+                .orderId(item.getOrder().getId())
+                .orderItemId(item.getId())
                 .paymentStatus(PaymentStatus.PARTIALLY_REFUNDED)
                 .payAmount(item.getFinalPrice())
                 .refundAmount(BigDecimal.ZERO)
