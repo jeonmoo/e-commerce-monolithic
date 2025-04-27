@@ -18,7 +18,7 @@ public class OrderResponse {
     private List<OrderResponseItem> orderItems;
     private OrderStatus orderStatus;
     private String address;
-    private BigDecimal totalPrice;
+    private BigDecimal totalFinalPrice;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -27,7 +27,7 @@ public class OrderResponse {
     public static class OrderResponseItem {
         private Long id;
         private Long productId;
-        private BigDecimal price;
+        private BigDecimal finalPrice;
         private Integer quantity;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
