@@ -14,6 +14,7 @@ import com.test.ecommerce.domain.product.mapper.ProductMapper;
 import com.test.ecommerce.domain.product.repository.ProductQueryRepository;
 import com.test.ecommerce.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,7 @@ public class ProductService {
                 .orElseThrow(() -> new GlobalException(ProductExceptionCode.NOT_FOUND_PRODUCT));
     }
 
+    @Cacheable(value = "productDetail", key = "#id")
     public ProductResponse getProductById(Long id) {
         Product product = findById(id);
         return ProductMapper.INSTANCE.toResponse(product);
