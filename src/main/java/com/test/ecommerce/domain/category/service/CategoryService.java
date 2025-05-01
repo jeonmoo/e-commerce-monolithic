@@ -9,6 +9,8 @@ import com.test.ecommerce.domain.category.mapper.CategoryMapper;
 import com.test.ecommerce.domain.category.repository.CategoryRepository;
 import com.test.ecommerce.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
 
+    @Cacheable(value = "categoryList", key = "'allCategories'")
     public List<CategoryResponse> getCategories() {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()
@@ -29,6 +32,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @CacheEvict(value = "categoryList", key = "'allCategories'")
     public CategoryResponse createCategory(CategoryRequest request) {
         Category category = CategoryMapper.INSTANCE.toEntity(request);
         Category savedCategory = categoryRepository.save(category);
@@ -36,6 +40,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @CacheEvict(value = "categoryList", key = "'allCategories'")
     public CategoryResponse modifyCategory(Long id, CategoryRequest request) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new GlobalException(CategoryExceptionCode.NOT_FOUND_CATEGORY));
@@ -44,6 +49,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @CacheEvict(value = "categoryList", key = "'allCategories'")
     public void updateCategory(Category category, CategoryRequest request) {
         category.setParentId(request.getParentId());
         category.setCategoryName(request.getCategoryName());
@@ -52,6 +58,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @CacheEvict(value = "categoryList", key = "'allCategories'")
     public Boolean removeCategory(Long id) {
         Boolean isCategoryExist = productRepository.existsByCategoryId(id);
         if (isCategoryExist) {
