@@ -5,7 +5,7 @@ CREATE TABLE product (
 	quantity INT NOT NULL,
 	final_price DECIMAL(20, 6) NOT NULL,
 	origin_price DECIMAL(20, 6) NOT NULL,
-	discount_id BIGINT NULL,
+	discount_price DECIMAL(20, 6) NOT NULL,
 	is_delete TINYINT NOT NULL,
 	created_at TIMESTAMP NOT NULL,
 	updated_at TIMESTAMP NULL
