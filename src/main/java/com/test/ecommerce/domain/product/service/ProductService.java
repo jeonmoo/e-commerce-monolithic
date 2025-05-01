@@ -2,11 +2,9 @@ package com.test.ecommerce.domain.product.service;
 
 import com.test.ecommerce.common.GlobalException;
 import com.test.ecommerce.common.exceptionCode.CategoryExceptionCode;
-import com.test.ecommerce.common.exceptionCode.DiscountExceptionCode;
 import com.test.ecommerce.common.exceptionCode.ProductExceptionCode;
 import com.test.ecommerce.domain.category.entity.Category;
 import com.test.ecommerce.domain.category.repository.CategoryRepository;
-import com.test.ecommerce.domain.discount.entity.Discount;
 import com.test.ecommerce.domain.discount.repository.DiscountRepository;
 import com.test.ecommerce.domain.product.dto.ProductRequest;
 import com.test.ecommerce.domain.product.dto.ProductResponse;
@@ -19,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -81,15 +80,8 @@ public class ProductService {
                     .orElseThrow(() -> new GlobalException(CategoryExceptionCode.NOT_FOUND_CATEGORY));
         }
 
-        Long discountId = request.getDiscountId();
-        Discount discount = null;
-        if (discountId != null) {
-            discount = discountRepository.findById(request.getDiscountId())
-                    .orElseThrow(()  -> new GlobalException(DiscountExceptionCode.NOT_FOUND_DISCOUNT));
-        }
-
         product.setCategory(category);
-        product.setDiscount(discount);
+        product.setDiscountPrice(request.getDiscountPrice());
         product.setProductName(request.getProductName());
         product.setQuantity(request.getQuantity());
         product.setFinalPrice(request.getFinalPrice());
@@ -100,9 +92,9 @@ public class ProductService {
     @Transactional
     public ProductResponse applyDiscount(Long id, ProductRequest request) {
         Product product = findById(id);
-        productSupportService.initDiscountToProduct(product, request);
+        BigDecimal discountPrice = request.getDiscountPrice();
+        productSupportService.initDiscountToProduct(product, discountPrice);
 
         return ProductMapper.INSTANCE.toResponse(product);
     }
-
 }

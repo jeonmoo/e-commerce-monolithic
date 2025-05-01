@@ -17,20 +17,21 @@ public class ProductResponse {
     private Integer quantity;
     private BigDecimal finalPrice;
     private BigDecimal originPrice;
-    private Long discountId;
+    private BigDecimal discountPrice;
     private Boolean isDelete;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @QueryProjection
-    public ProductResponse(Long id, Long categoryId, String productName, Integer quantity, BigDecimal finalPrice, BigDecimal originPrice, Long discountId, Boolean isDelete, LocalDateTime createdAt, LocalDateTime updatedAt) {
+
+    public ProductResponse(Long id, Long categoryId, String productName, Integer quantity, BigDecimal finalPrice, BigDecimal originPrice, BigDecimal discountPrice, Boolean isDelete, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.categoryId = categoryId;
         this.productName = productName;
         this.quantity = quantity;
         this.finalPrice = finalPrice;
         this.originPrice = originPrice;
-        this.discountId = discountId;
+        this.discountPrice = discountPrice;
         this.isDelete = isDelete;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;

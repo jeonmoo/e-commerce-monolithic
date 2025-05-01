@@ -1,7 +1,6 @@
 package com.test.ecommerce.domain.product.entity;
 
 import com.test.ecommerce.domain.category.entity.Category;
-import com.test.ecommerce.domain.discount.entity.Discount;
 import jakarta.persistence.Table;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -47,9 +46,13 @@ public class Product {
     private BigDecimal originPrice;
 
     @Setter
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "discount_id")
-    private Discount discount;
+    @Column
+    private BigDecimal discountPrice;
+
+//    @Setter
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "discount_id")
+//    private Discount discount;
 
     @Setter
     @ColumnDefault("true")
@@ -65,13 +68,13 @@ public class Product {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Product(Category category, String productName, Integer quantity, BigDecimal finalPrice, BigDecimal originPrice, Discount discount, Boolean isDelete) {
+    public Product(Category category, String productName, Integer quantity, BigDecimal finalPrice, BigDecimal originPrice, BigDecimal discountPrice, Boolean isDelete) {
         this.category = category;
         this.productName = productName;
         this.quantity = quantity;
         this.finalPrice = finalPrice;
         this.originPrice = originPrice;
-        this.discount = discount;
+        this.discountPrice = discountPrice;
         this.isDelete = isDelete;
     }
 }

@@ -13,6 +13,6 @@ public class ProductRequest {
     private Integer quantity;
     private BigDecimal finalPrice;
     private BigDecimal originPrice;
-    private Long discountId;
+    private BigDecimal discountPrice;
     private Boolean isDelete;
 }
