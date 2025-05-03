@@ -11,7 +11,17 @@ services:
       MYSQL_DATABASE: spring_db
     volumes:
       - ecommerce_monolithic_mysql_data:/var/lib/mysql
-    restart: unless-stopped
+    restart: always
+
+  redis:
+    image: redis:latest
+    container_name: spring_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ecommerce_monolithic_redis_data:/data
+    restart: always
 
 volumes:
   ecommerce_monolithic_mysql_data:
+  ecommerce_monolithic_redis_data:
