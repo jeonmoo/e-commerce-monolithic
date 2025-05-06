@@ -19,6 +19,7 @@ import com.test.ecommerce.domain.product.repository.ProductRepository;
 import com.test.ecommerce.domain.user.entity.User;
 import com.test.ecommerce.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,8 @@ public class OrderSupportService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final PaymentRepository paymentRepository;
+
+    private final StringRedisTemplate stringRedisTemplate;
 
     protected OrderResponse toResponse(Order order) {
         List<OrderResponse.OrderResponseItem> orderItemResponse = order.getOrderItems()
@@ -248,5 +251,17 @@ public class OrderSupportService {
                 .refundAmount(BigDecimal.ZERO)
                 .build();
         paymentRepository.save(payment);
+    }
+
+    @Transactional
+    protected void updateProductScore(List<OrderItem> items) {
+        List<Long> productIds = items.stream()
+                .map(item -> item.getProduct().getId())
+                .toList();
+
+        productIds.forEach(productId -> {
+            String redisKey = "product:score:";
+            stringRedisTemplate.opsForZSet().incrementScore(redisKey, productId.toString(), 1);
+        });
     }
 }

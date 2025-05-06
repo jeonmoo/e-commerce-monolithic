@@ -39,6 +39,8 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
         orderSupportService.pay(savedOrder);
 
+        orderSupportService.updateProductScore(order.getOrderItems());
+
         return orderSupportService.toResponse(savedOrder);
     }
 
