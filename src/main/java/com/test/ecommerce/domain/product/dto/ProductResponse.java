@@ -23,7 +23,6 @@ public class ProductResponse {
     private LocalDateTime updatedAt;
 
     @QueryProjection
-
     public ProductResponse(Long id, Long categoryId, String productName, Integer quantity, BigDecimal finalPrice, BigDecimal originPrice, BigDecimal discountPrice, Boolean isDelete, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.categoryId = categoryId;
