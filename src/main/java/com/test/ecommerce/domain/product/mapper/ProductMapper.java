@@ -1,5 +1,6 @@
 package com.test.ecommerce.domain.product.mapper;
 
+import com.test.ecommerce.domain.product.dto.ProductRankResponse;
 import com.test.ecommerce.domain.product.dto.ProductRequest;
 import com.test.ecommerce.domain.product.dto.ProductResponse;
 import com.test.ecommerce.domain.product.entity.Product;
@@ -16,4 +17,6 @@ public interface ProductMapper {
 
     @Mapping(target = "categoryId", source = "category.id")
     ProductResponse toResponse(Product product);
+
+    ProductRankResponse toRankResponse(long id, String name, long rank, long score);
 }

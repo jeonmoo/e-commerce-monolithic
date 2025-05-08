@@ -5,7 +5,7 @@ import com.test.ecommerce.common.exceptionCode.CategoryExceptionCode;
 import com.test.ecommerce.common.exceptionCode.ProductExceptionCode;
 import com.test.ecommerce.domain.category.entity.Category;
 import com.test.ecommerce.domain.category.repository.CategoryRepository;
-import com.test.ecommerce.domain.discount.repository.DiscountRepository;
+import com.test.ecommerce.domain.product.dto.ProductRankResponse;
 import com.test.ecommerce.domain.product.dto.ProductRequest;
 import com.test.ecommerce.domain.product.dto.ProductResponse;
 import com.test.ecommerce.domain.product.dto.ProductSearchRequest;
@@ -17,11 +17,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +35,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductQueryRepository productQueryRepository;
     private final CategoryRepository categoryRepository;
-
-    private final DiscountRepository discountRepository;
+    private final StringRedisTemplate stringRedisTemplate;
 
     private Product findById(Long id) {
         return productRepository.findById(id)
@@ -102,5 +105,21 @@ public class ProductService {
         productSupportService.initDiscountToProduct(product, discountPrice);
 
         return ProductMapper.INSTANCE.toResponse(product);
+    }
+
+    public List<ProductRankResponse> getProductRank(long startIndex, long EndIndex) {
+        String key = "product:score:*";
+        Set<ZSetOperations.TypedTuple<String>> topProducts = stringRedisTemplate.opsForZSet()
+                .reverseRangeWithScores(key, startIndex, EndIndex);
+
+        AtomicLong rank = new AtomicLong(1);
+        return topProducts.stream()
+                .map(tuple -> {
+                    long id = Long.parseLong(tuple.getValue());
+                    String name = findById(id).getProductName();
+                    long score = tuple.getScore().longValue();
+                    return ProductMapper.INSTANCE.toRankResponse(id, name, rank.getAndIncrement(), score);
+                })
+                .toList();
     }
 }

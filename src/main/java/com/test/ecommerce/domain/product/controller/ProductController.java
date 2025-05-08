@@ -1,6 +1,7 @@
 package com.test.ecommerce.domain.product.controller;
 
 import com.test.ecommerce.common.ApiResponse;
+import com.test.ecommerce.domain.product.dto.ProductRankResponse;
 import com.test.ecommerce.domain.product.dto.ProductRequest;
 import com.test.ecommerce.domain.product.dto.ProductResponse;
 import com.test.ecommerce.domain.product.dto.ProductSearchRequest;
@@ -52,6 +53,12 @@ public class ProductController {
     @PostMapping("/{id}/discount")
     public ResponseEntity<ApiResponse<Object>> applyDiscount(@PathVariable Long id, @RequestBody ProductRequest request) {
         ProductResponse result = productService.applyDiscount(id, request);
+        return ApiResponse.success(result);
+    }
+
+    @GetMapping("/rank")
+    public ResponseEntity<ApiResponse<Object>> getProductRank(@RequestParam Long startIndex, @RequestParam Long endIndex) {
+        List<ProductRankResponse> result = productService.getProductRank(startIndex, endIndex);
         return ApiResponse.success(result);
     }
 }
