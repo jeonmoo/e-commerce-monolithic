@@ -108,7 +108,7 @@ public class ProductService {
     }
 
     public List<ProductRankResponse> getProductRank(long startIndex, long EndIndex) {
-        String key = "product:score:*";
+        String key = "product:score";
         Set<ZSetOperations.TypedTuple<String>> topProducts = stringRedisTemplate.opsForZSet()
                 .reverseRangeWithScores(key, startIndex, EndIndex);
 

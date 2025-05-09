@@ -260,7 +260,7 @@ public class OrderSupportService {
                 .toList();
 
         productIds.forEach(productId -> {
-            String redisKey = "product:score:";
+            String redisKey = "product:score";
             stringRedisTemplate.opsForZSet().incrementScore(redisKey, productId.toString(), 1);
         });
     }
