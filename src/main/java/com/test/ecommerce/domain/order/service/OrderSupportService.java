@@ -255,13 +255,12 @@ public class OrderSupportService {
 
     @Transactional
     protected void updateProductScore(List<OrderItem> items) {
-        List<Long> productIds = items.stream()
-                .map(item -> item.getProduct().getId())
-                .toList();
+        Map<Long, Integer> scoreMap = items.stream()
+                .collect(Collectors.toMap(orderItem -> orderItem.getProduct().getId(), OrderItem::getQuantity));
 
-        productIds.forEach(productId -> {
+        scoreMap.forEach((id, score) -> {
             String redisKey = "product:score";
-            stringRedisTemplate.opsForZSet().incrementScore(redisKey, productId.toString(), 1);
+            stringRedisTemplate.opsForZSet().incrementScore(redisKey, id.toString(), score);
         });
     }
 }
