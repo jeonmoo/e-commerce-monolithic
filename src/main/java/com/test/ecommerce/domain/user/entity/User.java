@@ -1,7 +1,7 @@
 package com.test.ecommerce.domain.user.entity;
 
 import com.test.ecommerce.domain.order.entity.Order;
-import com.test.ecommerce.domain.user.enums.Rule;
+import com.test.ecommerce.domain.user.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,7 +30,7 @@ public class User {
     @Setter
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
-    private Rule rule;
+    private UserRole userRole;
 
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
