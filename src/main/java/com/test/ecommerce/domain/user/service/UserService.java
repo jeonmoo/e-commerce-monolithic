@@ -41,7 +41,7 @@ public class UserService {
     @Transactional
     public UserResponse createUser(UserRequest request) {
         User user = UserMapper.INSTANCE.toUser(request);
-        user.setRule(Rule.USER);
+        user.setUserRole(UserRole.USER);
         User savedUser = userRepository.save(user);
         return UserMapper.INSTANCE.toResponse(savedUser);
     }
