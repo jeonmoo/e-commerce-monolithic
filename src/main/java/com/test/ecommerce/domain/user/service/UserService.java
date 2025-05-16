@@ -11,7 +11,7 @@ import com.test.ecommerce.domain.order.repository.OrderRepository;
 import com.test.ecommerce.domain.user.dto.UserRequest;
 import com.test.ecommerce.domain.user.dto.UserResponse;
 import com.test.ecommerce.domain.user.entity.User;
-import com.test.ecommerce.domain.user.enums.Rule;
+import com.test.ecommerce.domain.user.enums.UserRole;
 import com.test.ecommerce.domain.user.mapper.UserMapper;
 import com.test.ecommerce.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
