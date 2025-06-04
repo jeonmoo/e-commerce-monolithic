@@ -45,7 +45,7 @@ public class Category {
     @Column
     private Boolean isDelete;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<Product> products;
 
     @CreationTimestamp
