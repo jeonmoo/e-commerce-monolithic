@@ -15,6 +15,7 @@ public class CategoryResponse implements Serializable {
     private Integer depth;
     private Integer sort;
     private String categoryName;
+    private Boolean isDelete;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
