@@ -48,9 +48,7 @@ public class CategoryService {
         return CategoryMapper.INSTANCE.toResponse(category);
     }
 
-    @Transactional
-    @CacheEvict(value = "categoryList", key = "'allCategories'")
-    public void updateCategory(Category category, CategoryRequest request) {
+    private void updateCategory(Category category, CategoryRequest request) {
         category.setParentId(request.getParentId());
         category.setCategoryName(request.getCategoryName());
         category.setDepth(request.getDepth());
