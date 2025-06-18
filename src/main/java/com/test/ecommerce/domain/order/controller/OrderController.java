@@ -16,6 +16,12 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<OrderResponse>> getOrder(@PathVariable @RequestBody Long id) {
+        OrderResponse result = orderService.getOrder(id);
+        return ApiResponse.success(result);
+    }
+
     @PostMapping
     public ResponseEntity<ApiResponse<OrderResponse>> registerOrder(@Valid @RequestBody OrderRequest request) {
         OrderResponse response = orderService.registerOrder(request);
