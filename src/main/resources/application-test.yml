@@ -1,0 +1,12 @@
+# 테스트 컨테이너 사용으로 하위 설정은 무시됨
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/ecommerce_db
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
