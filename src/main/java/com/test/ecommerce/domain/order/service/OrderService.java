@@ -29,6 +29,11 @@ public class OrderService {
                 .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER));
     }
 
+    public OrderResponse getOrder(Long id) {
+        Order order = findOrder(id);
+        return orderSupportService.toResponse(order);
+    }
+
     @Transactional
     public OrderResponse registerOrder(OrderRequest request) {
         List<Product> products = orderSupportService.getOrderInProduct(request);
