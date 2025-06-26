@@ -49,11 +49,6 @@ public class Product {
     @Column
     private BigDecimal discountPrice;
 
-//    @Setter
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "discount_id")
-//    private Discount discount;
-
     @Setter
     @ColumnDefault("true")
     @Column(columnDefinition = "TINYINT")
