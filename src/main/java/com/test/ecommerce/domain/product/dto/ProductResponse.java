@@ -4,12 +4,13 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class ProductResponse {
+public class ProductResponse implements Serializable {
 
     private Long id;
     private Long categoryId;
