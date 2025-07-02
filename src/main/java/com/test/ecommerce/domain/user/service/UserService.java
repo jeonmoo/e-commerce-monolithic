@@ -15,6 +15,8 @@ import com.test.ecommerce.domain.user.enums.UserRole;
 import com.test.ecommerce.domain.user.mapper.UserMapper;
 import com.test.ecommerce.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,12 +29,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
 
-
-    private User findById(Long id) {
+    public User findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.NOT_FOUND_USER));
     }
 
+    @Cacheable(value = "user", key = "#id")
     public UserResponse getUser(Long id) {
         User user = findById(id);
         return UserMapper.INSTANCE.toResponse(user);
@@ -47,6 +49,7 @@ public class UserService {
     }
 
     @Transactional
+    @CachePut(value = "user", key = "#id")
     public UserResponse modifyUser(Long id, UserRequest request) {
         User user = findById(id);
 
