@@ -30,7 +30,7 @@ public class Product {
     private Category category;
 
     @Setter
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 255)
     private String productName;
 
     @Setter
