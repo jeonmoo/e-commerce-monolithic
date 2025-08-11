@@ -58,7 +58,8 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Builder
-    public User(String userName, String password, String phoneNumber, String email, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public User(UserRole userRole, String userName, String password, String phoneNumber, String email, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.userRole = userRole;
         this.userName = userName;
         this.password = password;
         this.phoneNumber = phoneNumber;
