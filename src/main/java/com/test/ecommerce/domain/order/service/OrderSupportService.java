@@ -121,15 +121,15 @@ public class OrderSupportService {
     @Transactional
     protected void initPriceInOrder(Order order) {
         BigDecimal totalOriginPrice = order.getOrderItems().stream()
-                .map(OrderItem::getOriginPrice)
+                .map(item -> item.getOriginPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalDiscountPrice = order.getOrderItems().stream()
-                .map(OrderItem::getDiscountPrice)
+                .map(item -> item.getDiscountPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalFinalPrice = order.getOrderItems().stream()
-                .map(OrderItem::getFinalPrice)
+                .map(item -> item.getFinalPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         order.setTotalOriginPrice(totalOriginPrice);
