@@ -1,5 +1,7 @@
 package com.test.ecommerce.domain.product.controller;
 
+import com.test.ecommerce.domain.category.entity.Category;
+import com.test.ecommerce.domain.category.repository.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,6 +22,9 @@ class ProductControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @BeforeEach
     void clear() {
         // 메서드 실행 전 캐시 초기화
@@ -31,6 +36,11 @@ class ProductControllerTest {
 
     @BeforeEach
     void setData() {
-
+        Category category = new Category();
+        category.setDepth(0);
+        category.setSort(0);
+        category.setCategoryName("Digital");
+        category.setIsDelete(false);
+        categoryRepository.save(category);
     }
 }
