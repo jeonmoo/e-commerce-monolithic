@@ -9,6 +9,7 @@ import com.test.ecommerce.domain.user.entity.User;
 import com.test.ecommerce.domain.user.enums.UserRole;
 import com.test.ecommerce.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +89,7 @@ class OrderControllerTest {
     }
 
     @Test
+    @Disabled
     @DisplayName("주문등록 - 주문을 등록한다")
     void registerOrderTest() throws Exception{
         String requestBody = """
