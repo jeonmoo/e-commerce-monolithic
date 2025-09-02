@@ -1,5 +1,6 @@
 package com.test.ecommerce.domain.user.controller;
 
+import com.test.ecommerce.config.TestContainerBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserControllerTest {
+class UserControllerTest extends TestContainerBase {
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;

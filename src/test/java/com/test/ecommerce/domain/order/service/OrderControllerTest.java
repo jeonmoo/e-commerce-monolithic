@@ -1,5 +1,6 @@
 package com.test.ecommerce.domain.order.service;
 
+import com.test.ecommerce.config.TestContainerBase;
 import com.test.ecommerce.domain.category.entity.Category;
 import com.test.ecommerce.domain.category.repository.CategoryRepository;
 import com.test.ecommerce.domain.order.enums.OrderStatus;
@@ -32,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-class OrderControllerTest {
+class OrderControllerTest extends TestContainerBase {
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;
