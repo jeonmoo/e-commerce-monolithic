@@ -32,7 +32,7 @@ pipeline {
             post {
                 always {
                     // 테스트 결과 리포트 수집
-                    publishTestResults testResultsPattern: junit '**/build/test-results/test/*.xml'
+                    junit '**/build/test-results/test/*.xml'
                 }
             }
         }
