@@ -1,10 +1,10 @@
 pipeline {
     agent any
 
-    environment {
-        JAVA_HOME = '/usr/lib/jvm/java-21-openjdk-amd64'
-        PATH = "${JAVA_HOME}/bin:${PATH}"
-    }
+    //environment {
+        //JAVA_HOME = '/usr/lib/jvm/java-21-openjdk-amd64'
+        //PATH = "${JAVA_HOME}/bin:${PATH}"
+    //}
 
     stages {
         // 1단계: 소스코드 체크아웃
