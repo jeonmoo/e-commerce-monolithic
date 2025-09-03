@@ -20,16 +20,14 @@ pipeline {
             steps {
                 echo '=== Gradle 설정 시작 ==='
                 sh 'chmod +x ./gradlew'
-                sh './gradlew --version'
-                sh 'java -version'
             }
         }
 
-        // 3단계: 애플리케이션 빌드 및 테스트
-        stage('Build and Test') {
+        // 3단계: 테스트
+        stage('Test') {
             steps {
-                echo '=== 애플리케이션 빌드 및 테스트 시작 ==='
-                sh './gradlew clean build' // `clean`과 `build`를 한 번에 실행
+                echo '=== 애플리케이션 클린 및 테스트 시작 ==='
+                sh './gradlew clean test' // `clean`과 `build`를 한 번에 실행
             }
             post {
                 always {
@@ -39,7 +37,15 @@ pipeline {
             }
         }
 
-        // 4단계: 애플리케이션 배포
+        // 4단계: 빌드
+        stage('Build') {
+            steps {
+                echo '=== 애플리케이션 빌드 및 테스트 시작 ==='
+                sh './gradlew build -x test' // 테스트 제외하고 빌드
+            }
+        }
+
+        // 5단계: 애플리케이션 배포
         stage('Deploy') {
             steps {
                 echo '=== 애플리케이션 배포 시작 ==='
