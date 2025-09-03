@@ -49,23 +49,31 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo '=== 애플리케이션 배포 시작 ==='
-                // 기존 애플리케이션 프로세스 종료
-                sh '''
-                    if [ -f "pid.file" ]; then
-                        PID=$(cat pid.file)
-                        echo "기존 프로세스 종료: $PID"
-                        kill $PID || true
-                        rm pid.file
-                    fi
-                '''
-
-                // 새로운 JAR 파일 백그라운드로 실행
-                sh '''
-                    echo "새로운 애플리케이션 시작"
-                    nohup java -jar build/libs/*.jar > app.log 2>&1 &
-                    echo $! > pid.file
-                '''
-
+                script {
+                    // 기존 애플리케이션 프로세스 종료
+                    sh '''
+                        if [ -f "pid.file" ]; then
+                            PID=$(cat pid.file)
+                            echo "기존 프로세스 종료: $PID"
+                            kill $PID || true
+                            rm pid.file
+                        fi
+                    '''
+    
+                    // 새로운 JAR 파일 백그라운드로 실행
+                    sh '''
+                        echo "새로운 애플리케이션 시작"
+                        nohup java -jar build/libs/*.jar > app.log 2>&1 &
+                        echo $! > pid.file
+                    '''
+                    
+                    // 10초 대기
+                    sleep 10
+                    
+                    // 애플리케이션 로그 출력
+                    echo '=== 애플리케이션 로그 확인 ==='
+                    sh 'tail -n 100 app.log'
+                }
                 echo '배포 완료'
             }
         }
