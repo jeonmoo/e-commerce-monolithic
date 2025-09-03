@@ -75,7 +75,7 @@ pipeline {
     post {
         always {
             echo '=== 파이프라인 정리 작업 시작 ==='
-            cleanWs()
+            // cleanWs()
         }
         success {
             echo '🎉 파이프라인이 성공적으로 완료되었습니다!'
