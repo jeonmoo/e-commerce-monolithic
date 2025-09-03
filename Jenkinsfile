@@ -63,7 +63,7 @@ pipeline {
                     // 새로운 JAR 파일 백그라운드로 실행
                     sh '''
                         echo "새로운 애플리케이션 시작"
-                        nohup java -jar build/libs/*SNAPSHOT.jar > app.log 2>&1 &
+                        nohup java -jar build/libs/*SNAPSHOT.jar --spring.profiles.active=dev > app.log 2>&1 &
                         echo $! > pid.file
                     '''
                     
