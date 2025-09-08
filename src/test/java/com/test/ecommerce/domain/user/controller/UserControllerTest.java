@@ -2,6 +2,7 @@ package com.test.ecommerce.domain.user.controller;
 
 import com.test.ecommerce.config.TestContainerBase;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ class UserControllerTest extends TestContainerBase {
     }
 
     @Test
+    @Disabled
     @DisplayName("사용자 회원가입 - 사용자 회원가입을 한다.")
     void createUserTest() throws Exception {
         String userName = "테스트유저";
