@@ -16,7 +16,7 @@ spring:
 
   data:
     redis:
-      host: 127.0.0.1
+      host: clustercfg.ecommerce-redis.a9dbpd.apn2.cache.amazonaws.com
       port: 6379
       #      password: yourpassword # 설정한 경우만
       client-type: lettuce
