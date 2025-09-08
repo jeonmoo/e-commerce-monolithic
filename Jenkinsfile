@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    //environment {
-        //JAVA_HOME = '/usr/lib/jvm/java-21-openjdk-amd64'
-        //PATH = "${JAVA_HOME}/bin:${PATH}"
-    //}
-
     stages {
         // 1단계: 소스코드 체크아웃
         stage('Checkout') {
@@ -27,11 +22,10 @@ pipeline {
         stage('Test') {
             steps {
                 echo '=== 애플리케이션 클린 및 테스트 시작 ==='
-                sh './gradlew clean test' // `clean`과 `build`를 한 번에 실행
+                sh './gradlew clean test'
             }
             post {
                 always {
-                    // 테스트 결과 리포트 수집
                     junit '**/build/test-results/test/*.xml'
                 }
             }
@@ -40,46 +34,51 @@ pipeline {
         // 4단계: 빌드
         stage('Build') {
             steps {
-                echo '=== 애플리케이션 빌드 및 테스트 시작 ==='
-                sh './gradlew build -x test' // 테스트 제외하고 빌드
+                echo '=== 애플리케이션 빌드 시작 ==='
+                sh './gradlew build -x test'
             }
         }
 
-        // 5단계: 애플리케이션 배포
+        // 5단계: JAR 파일 전송 및 배포
         stage('Deploy') {
             steps {
-                echo '=== 애플리케이션 배포 시작 ==='
+                echo '=== JAR 파일 전송 및 배포 시작 ==='
+
                 script {
-                    // 기존 애플리케이션 프로세스 종료
-                    sh '''
-                        if [ -f "pid.file" ]; then
-                            PID=$(cat pid.file)
-                            echo "기존 프로세스 종료: $PID"
-                            kill $PID || true
-                            rm pid.file
-                        fi
-                    '''
-    
-                    // 새로운 JAR 파일 백그라운드로 실행
-                    sh '''
-                        echo "새로운 애플리케이션 시작"
-                        nohup java -jar build/libs/*SNAPSHOT.jar --spring.profiles.active=dev > app.log 2>&1 &
-                        echo $! > pid.file
-                    '''
-                    
-                    // 10초 대기
-                    sleep 20
-                    
-                    // 애플리케이션 로그 출력
-                    echo '=== 애플리케이션 로그 확인 ==='
-                    sh 'tail -n 100 app.log'
+                    def remoteIp = "3.39.233.100"
+                    def remoteUser = "ubuntu" // EC2에 접속하는 사용자 이름 (기본값: ubuntu)
+                    def jarFileName = sh(returnStdout: true, script: 'ls build/libs/*.jar').trim()
+
+                    // SSH Agent 설정: 키를 Jenkins에 등록하여 사용합니다.
+                    sshagent(credentials: ['github']) {
+                        // 1. JAR 파일을 애플리케이션 서버로 전송
+                        echo 'JAR 파일 전송 중...'
+                        sh "scp ${jarFileName} ${remoteUser}@${remoteIp}:/home/${remoteUser}/"
+
+                        // 2. SSH를 통해 원격 애플리케이션 서버에 접속하여 배포 스크립트 실행
+                        echo '애플리케이션 배포 중...'
+                        sh '''
+                            ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteIp} "
+                                # 기존 애플리케이션 프로세스 종료
+                                if [ -f 'pid.file' ]; then
+                                    PID=$(cat pid.file)
+                                    echo '기존 프로세스 종료: $PID'
+                                    kill $PID || true
+                                    rm pid.file
+                                fi
+
+                                # 새로운 JAR 파일 백그라운드로 실행
+                                nohup java -jar /home/${remoteUser}/$(ls -t /home/${remoteUser}/*.jar | head -n 1) > /dev/null 2>&1 &
+                                echo \$! > /home/${remoteUser}/pid.file
+                            "
+                        '''
+                    }
                 }
                 echo '배포 완료'
             }
         }
     }
 
-    // 파이프라인 완료 후 작업
     post {
         always {
             echo '=== 파이프라인 정리 작업 시작 ==='
