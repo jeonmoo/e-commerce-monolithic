@@ -23,21 +23,21 @@ services:
       - redis-data:/data
     restart: always
 
-  jenkins:
-    image: jenkins/jenkins:lts
-    container_name: jenkins
-    privileged: true
-    user: root
-    ports:
-      - "9090:8080"
-      - "50000:50000"
-    volumes:
-      - jenkins_home:/var/jenkins-home
-      - /var/run/docker.sock:/var/run/docker.sock # Docker 데몬과 통신
-      - /usr/bin/docker:/usr/bin/docker # Jenkins에서 Docker CLI 사용
-    restart: always
+#  jenkins:
+#    image: jenkins/jenkins:lts
+#    container_name: jenkins
+#    privileged: true
+#    user: root
+#    ports:
+#      - "9090:8080"
+#      - "50000:50000"
+#    volumes:
+#      - jenkins_home:/var/jenkins-home
+#      - /var/run/docker.sock:/var/run/docker.sock # Docker 데몬과 통신
+#      - /usr/bin/docker:/usr/bin/docker # Jenkins에서 Docker CLI 사용
+#    restart: always
 
 volumes:
-  mysql-data:
+#  mysql-data:
   redis-data:
-  jenkins_home:
+#  jenkins_home:
