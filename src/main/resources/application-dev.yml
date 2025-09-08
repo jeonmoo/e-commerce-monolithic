@@ -13,3 +13,16 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      #      password: yourpassword # 설정한 경우만
+      client-type: lettuce
+      lettuce:
+        pool:
+          enabled: true
+          max-active: 10
+          max-idle: 10
+          min-idle: 2
