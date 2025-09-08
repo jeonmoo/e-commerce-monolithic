@@ -68,7 +68,7 @@ pipeline {
                                 fi
 
                                 # 새로운 JAR 파일 백그라운드로 실행
-                                nohup java -jar /home/${remoteUser}/$(ls -t /home/${remoteUser}/*.jar | head -n 1) > /dev/null 2>&1 &
+                                nohup java -jar /home/${remoteUser}/$(ls -t /home/${remoteUser}/*.jar | head -n 1) --spring.profiles.active=dev > /dev/null 2>&1 &
                                 echo \$! > /home/${remoteUser}/pid.file
                             "
                         '''
