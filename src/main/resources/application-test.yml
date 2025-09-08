@@ -5,7 +5,7 @@ spring:
       on-profile: test
 
   datasource:
-    url: jdbc:mysql://localhost:3306/ecommerce_db
+    url: jdbc:mysql://ecommerce.cx6kge0eeual.ap-northeast-2.rds.amazonaws.com:3306/ecommerce_db
     username: root
     password: T2rOqyU9IG
     driver-class-name: com.mysql.cj.jdbc.Driver
