@@ -47,7 +47,7 @@ pipeline {
                 script {
                     def remoteIp = "3.35.27.116"
                     def remoteUser = "ubuntu" // EC2에 접속하는 사용자 이름 (기본값: ubuntu)
-                    def jarFileName = sh(returnStdout: true, script: 'ls build/libs/*.jar').trim()
+                    def jarFileName = sh(returnStdout: true, script: 'ls build/libs/*SNAPSHOT.jar').trim()
 
                     // SSH Agent 설정: 키를 Jenkins에 등록하여 사용합니다.
                     sshagent(credentials: ['AWS-keypair']) {
