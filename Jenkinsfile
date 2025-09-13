@@ -45,7 +45,7 @@ pipeline {
                 echo '=== JAR 파일 전송 및 배포 시작 ==='
 
                 script {
-                    def remoteIp = "3.35.27.116"
+                    def remoteIp = "3.37.61.179"
                     def remoteUser = "ubuntu" // EC2에 접속하는 사용자 이름 (기본값: ubuntu)
                     def jarFileName = sh(returnStdout: true, script: 'ls build/libs/*SNAPSHOT.jar').trim()
 
