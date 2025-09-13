@@ -16,7 +16,7 @@ spring:
 
   data:
     redis:
-      host: master.ecommerce-cache.a9dbpd.apn2.cache.amazonaws.com
+      host: master.ecommerce-redis.a9dbpd.apn2.cache.amazonaws.com
       port: 6379
       #      password: yourpassword # 설정한 경우만
       client-type: lettuce
