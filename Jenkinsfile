@@ -64,16 +64,21 @@ pipeline {
                                     if [ -s "pid.file" ]; then
                                         PID=\$(cat pid.file)
                                         echo "기존 프로세스 종료: \$PID"
-                                        kill \$PID || true
+                                        # 'kill -9'를 사용해 확실하게 종료
+                                        kill -9 \$PID || true
                                     fi
                                     rm -f pid.file
                                 fi
 
                                 # 새로운 JAR 파일 백그라운드로 실행
-                                nohup java -jar /home/${remoteUser}/\$(ls -t /home/${remoteUser}/*.jar | head -n 1) --spring.profiles.active=dev > /dev/null 2>&1 &
+                                # 로그 파일을 생성하고, nohup.out 파일 대신 해당 로그 파일을 사용
+                                # 로그가 남도록 수정
+                                nohup java -jar /home/${remoteUser}/\$(ls -t /home/${remoteUser}/*.jar | head -n 1) --spring.profiles.active=dev > app.log 2>&1 &
                                 echo \$! > /home/${remoteUser}/pid.file
 
+                                # 실행 후 PID와 로그 파일 경로 출력
                                 echo "배포 완료: PID \$(cat /home/${remoteUser}/pid.file)"
+                                echo "로그 위치: /home/${remoteUser}/app.log"
                             '
                         """
                     }
