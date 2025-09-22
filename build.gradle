@@ -84,6 +84,13 @@ dependencies {
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation("org.testcontainers:mysql")	// TestMysql
 
+	// Logging
+	// Logstash
+	implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+
+	// Micrometer
+	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+
 }
 
 tasks.named('test') {
