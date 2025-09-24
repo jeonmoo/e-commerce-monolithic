@@ -26,3 +26,21 @@ spring:
           max-active: 10
           max-idle: 10
           min-idle: 2
+
+logging:
+  level:
+    root: INFO
+#    org.springframework.web: INFO            # 웹 요청 로그
+#    org.springframework.security: INFO       # 보안 관련 디버깅
+#    org.hibernate.SQL: INFO                  # SQL 쿼리 확인
+#    org.hibernate.type.descriptor.sql: TRACE # SQL 파라미터 확인
+#
+#  file:
+#    name: logs/dev-application.log
+#
+#  logback:
+#    rollingpolicy:
+#      file-name-pattern: logs/dev-application-%d{yyyy-MM-dd}.%i.log
+#      max-file-size: 50MB
+#      max-history: 7        # 개발환경은 일주일만 보관
+#      total-size-cap: 500MB
