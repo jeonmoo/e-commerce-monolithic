@@ -13,3 +13,26 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+logging:
+  level:
+    root: INFO
+#    org.springframework.web: INFO    # 모든 HTTP 요청 상세 로그
+#    org.hibernate.SQL: INFO
+#    org.hibernate.type: INFO
+#    org.springframework.jdbc: INFO   # JDBC 로그
+#
+#  # 로컬에서는 파일 로그 생성 안함 (콘솔만)
+#  # file 설정을 주석처리하거나 제거
+#  file:
+#    name: logs/local-application.log
+#
+#  pattern:
+#    console: "%d{HH:mm:ss} %-5level %logger{15} - %msg%n"  # 간단한 패턴
+#
+#  logback:
+#    rollingpolicy:
+#      file-name-pattern: logs/local-application-%d{yyyy-MM-dd}.%i.log
+#      max-file-size: 50MB
+#      max-history: 7        # 개발환경은 일주일만 보관
+#      total-size-cap: 500MB
