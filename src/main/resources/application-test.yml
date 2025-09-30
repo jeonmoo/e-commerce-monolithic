@@ -10,3 +10,20 @@ spring:
     password: T2rOqyU9IG
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+logging:
+  level:
+    root: INFO
+
+    # 테스트 관련 로그
+#    org.springframework.test: DEBUG
+#    org.springframework.boot.test: DEBUG
+#    org.testcontainers: INFO
+#
+#  file:
+#    name: logs/test-application.log
+#
+#  logback:
+#    rollingpolicy:
+#      file-name-pattern: logs/test-application-%d{yyyy-MM-dd}.log
+#      max-file-size: 50MB
+#      max-history: 14
