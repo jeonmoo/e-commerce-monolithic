@@ -1,0 +1,13 @@
+filebeat.inputs:
+  - type: filestream
+    id: ecommerce-app-logs
+    enabled: true
+    paths:
+      - /var/log/my-app-logs/*.log # ❗ docker-compose에서 마운트한 경로를 사용
+    json:
+      keys_under_root: true
+      overwrite_keys: true
+      add_error_key: true
+
+output.logstash:
+  hosts: ["logstash:5044"] # ❗ logstash 컨테이너 이름을 사용
