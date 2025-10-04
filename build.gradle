@@ -91,6 +91,9 @@ dependencies {
 	// Micrometer
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
 
+	// Prometheus
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
 }
 
 tasks.named('test') {
