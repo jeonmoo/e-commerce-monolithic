@@ -36,6 +36,15 @@ springdoc:
   swagger-ui:
     enabled: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,prometheus" # /actuator/prometheus 엔드포인트 활성화
+  metrics:
+    tags:
+      application: ${spring.application.name} # 메트릭에 애플리케이션 이름 태그 추가
+
 logging:
   level:
     org.springframework: WARN
