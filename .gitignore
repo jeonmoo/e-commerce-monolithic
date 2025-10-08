@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Auth 관련 ###
+local-secret.env
