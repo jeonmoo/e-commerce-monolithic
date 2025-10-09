@@ -1,0 +1,28 @@
+# 전역 설정
+global:
+  # 메트릭 수집 간격
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# 수집 설정 목록
+scrape_configs:
+  # ----------------------------------------------------
+  # 1. Spring Boot 애플리케이션 메트릭 수집 설정
+  # ----------------------------------------------------
+  - job_name: 'spring-boot-app'
+    # Docker 컨테이너(Prometheus)가 Mac 호스트의 서비스에 접근하기 위해 'host.docker.internal' 사용
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+
+  # ----------------------------------------------------
+  # 2. Prometheus 자체 메트릭 수집 설정
+  # ----------------------------------------------------
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
