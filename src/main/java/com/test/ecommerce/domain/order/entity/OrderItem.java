@@ -69,7 +69,7 @@ public class OrderItem {
 
     @Builder
 
-    public OrderItem(Order order, Product product, OrderStatus orderStatus, Integer quantity, BigDecimal originPrice, BigDecimal finalPrice, BigDecimal discountPrice, List<OrderItemDiscount> discounts) {
+    public OrderItem(Order order, Product product, Integer quantity, BigDecimal originPrice, BigDecimal finalPrice, BigDecimal discountPrice, List<OrderItemDiscount> discounts) {
         this.order = order;
         this.product = product;
         this.orderStatus = OrderStatus.PENDING;
