@@ -27,6 +27,7 @@ public class OrderResponse {
     public static class OrderResponseItem {
         private Long id;
         private Long productId;
+        private OrderStatus orderStatus;
         private BigDecimal finalPrice;
         private Integer quantity;
         private LocalDateTime createdAt;
