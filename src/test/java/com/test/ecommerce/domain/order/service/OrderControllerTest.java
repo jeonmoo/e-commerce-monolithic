@@ -126,7 +126,7 @@ class OrderControllerTest extends TestContainerBase {
 
     @Test
     @DisplayName("주문조회 - 주문을 조회한다")
-    void getOrder() throws Exception {
+    void getOrderTest() throws Exception {
         // given
         Integer quantity = 10;
         BigDecimal originPrice = BigDecimal.valueOf(100000);
@@ -167,5 +167,52 @@ class OrderControllerTest extends TestContainerBase {
                 .andExpect(jsonPath("$.result.address").value(address))
                 .andExpect(jsonPath("$.result.totalFinalPrice").value(finalPrice))
                 .andExpect(jsonPath("$.result.orderItems[0].productId").value(product.getId()));
+    }
+
+    @Test
+    @DisplayName("주문 취소 - 주문을 취소한다.")
+    void cancelOrderTest() throws Exception {
+        // given
+        Integer quantity = 10;
+        BigDecimal originPrice = BigDecimal.valueOf(100000);
+        BigDecimal finalPrice = BigDecimal.valueOf(80000);
+        BigDecimal discountPrice = BigDecimal.valueOf(20000);
+        String address = "경기도 성남시 분당구 정자일로 95";
+
+        OrderItem orderItem = OrderItem.builder()
+                .product(product)
+                .quantity(quantity)
+                .originPrice(originPrice)
+                .finalPrice(finalPrice)
+                .discountPrice(discountPrice)
+                .build();
+
+        Order order = Order.builder()
+                .user(user)
+                .orderItems(List.of(orderItem))
+                .totalFinalPrice(finalPrice)
+                .totalOriginPrice(originPrice)
+                .totalDiscountPrice(discountPrice)
+                .address(address)
+                .build();
+        orderItem.setOrder(order);
+
+        orderRepository.save(order);
+
+        String requestBody = """
+                {
+                  "reason": "%s"
+                }
+                """.formatted("단순변심");
+
+        // when
+        ResultActions response = mockMvc.perform(post("/orders/{id}/cancel", order.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody));
+
+        //then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isSuccess").value(true));
     }
 }
