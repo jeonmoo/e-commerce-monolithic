@@ -215,4 +215,46 @@ class OrderControllerTest extends TestContainerBase {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.isSuccess").value(true));
     }
+
+    @Test
+    @DisplayName("주문 확정 - 주문을 확정한다.")
+    void completeOrderTest() throws Exception {
+        // given
+        Integer quantity = 10;
+        BigDecimal originPrice = BigDecimal.valueOf(100000);
+        BigDecimal finalPrice = BigDecimal.valueOf(80000);
+        BigDecimal discountPrice = BigDecimal.valueOf(20000);
+        String address = "경기도 성남시 분당구 정자일로 95";
+
+        OrderItem orderItem = OrderItem.builder()
+                .product(product)
+                .quantity(quantity)
+                .originPrice(originPrice)
+                .finalPrice(finalPrice)
+                .discountPrice(discountPrice)
+                .build();
+
+        Order order = Order.builder()
+                .user(user)
+                .orderItems(List.of(orderItem))
+                .totalFinalPrice(finalPrice)
+                .totalOriginPrice(originPrice)
+                .totalDiscountPrice(discountPrice)
+                .address(address)
+                .build();
+        orderItem.setOrder(order);
+
+        orderRepository.save(order);
+
+        //when
+        ResultActions response = mockMvc.perform(post("/orders/{id}/complete", order.getId())
+                .contentType(MediaType.APPLICATION_JSON));
+
+        //then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isSuccess").value(true))
+                .andExpect(jsonPath("$.result.orderStatus").value(OrderStatus.COMPLETE.getStatus()));
+    }
+
 }
