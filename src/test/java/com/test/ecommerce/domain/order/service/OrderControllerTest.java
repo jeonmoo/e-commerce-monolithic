@@ -298,4 +298,47 @@ class OrderControllerTest extends TestContainerBase {
                 .andExpect(jsonPath("$.result.orderStatus").value(OrderStatus.REQUIRED_REFUND.getStatus()));
     }
 
+    @Test
+    @DisplayName("주문 전체 환불 - 주문 전체를 환불한다.")
+    void refundOrderTest() throws Exception {
+        // given
+        Integer quantity = 10;
+        BigDecimal originPrice = BigDecimal.valueOf(100000);
+        BigDecimal finalPrice = BigDecimal.valueOf(80000);
+        BigDecimal discountPrice = BigDecimal.valueOf(20000);
+        String address = "경기도 성남시 분당구 정자일로 95";
+
+        OrderItem orderItem = OrderItem.builder()
+                .product(product)
+                .quantity(quantity)
+                .originPrice(originPrice)
+                .finalPrice(finalPrice)
+                .discountPrice(discountPrice)
+                .build();
+
+        Order order = Order.builder()
+                .user(user)
+                .orderItems(List.of(orderItem))
+                .totalFinalPrice(finalPrice)
+                .totalOriginPrice(originPrice)
+                .totalDiscountPrice(discountPrice)
+                .address(address)
+                .build();
+        order.setOrderStatus(OrderStatus.REQUIRED_REFUND);  // 환불요청상태에서 환불가능
+        orderItem.setOrder(order);
+
+        orderRepository.save(order);
+
+        // when
+        ResultActions response = mockMvc.perform(post("/orders/{id}/refund", order.getId())
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isSuccess").value(true))
+                .andExpect(jsonPath("$.result.orderStatus").value(OrderStatus.REFUNDED.getStatus()))
+                .andExpect(jsonPath("$.result.orderItems[*].orderStatus").value(OrderStatus.REFUNDED.getStatus()));
+    }
+
 }
