@@ -341,4 +341,61 @@ class OrderControllerTest extends TestContainerBase {
                 .andExpect(jsonPath("$.result.orderItems[*].orderStatus").value(OrderStatus.REFUNDED.getStatus()));
     }
 
+    @Test
+    @DisplayName("주문 부분 환불 요청 - 주문 부분 환불요청을 한다.")
+    void requestRefundOrderItemTest() throws Exception {
+        // given
+        Integer quantity = 10;
+        BigDecimal originPrice = BigDecimal.valueOf(100000);
+        BigDecimal finalPrice = BigDecimal.valueOf(80000);
+        BigDecimal discountPrice = BigDecimal.valueOf(20000);
+        String address = "경기도 성남시 분당구 정자일로 95";
+
+        OrderItem orderItem1 = OrderItem.builder()
+                .product(product)
+                .quantity(quantity)
+                .originPrice(originPrice)
+                .finalPrice(finalPrice)
+                .discountPrice(discountPrice)
+                .build();
+
+        OrderItem orderItem2 = OrderItem.builder()
+                .product(product)
+                .quantity(quantity)
+                .originPrice(originPrice)
+                .finalPrice(finalPrice)
+                .discountPrice(discountPrice)
+                .build();
+
+        List<OrderItem> orderItems = List.of(orderItem1, orderItem2);
+
+        Order order = Order.builder()
+                .user(user)
+                .orderItems(orderItems)
+                .totalFinalPrice(finalPrice)
+                .totalOriginPrice(originPrice)
+                .totalDiscountPrice(discountPrice)
+                .address(address)
+                .build();
+        order.setOrderStatus(OrderStatus.COMPLETE);
+        orderItems.forEach(item -> {
+            item.setOrder(order);
+            item.setOrderStatus(OrderStatus.COMPLETE);
+        });
+
+        orderRepository.save(order);
+
+        // when
+        ResultActions response = mockMvc.perform(post("/orders/{id}/{orderItemId}/refund-request", order.getId(), orderItem1.getId())
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isSuccess").value(true))
+                .andExpect(jsonPath("$.result.orderStatus").value(OrderStatus.PARTIALLY_REQUIRED_REFUND.getStatus()))
+                .andExpect(jsonPath("$.result.orderItems[?(@.id == " + orderItem1.getId() + ")]").exists())
+                .andExpect(jsonPath("$.result.orderItems[?(@.id == " + orderItem1.getId() + ")].orderStatus").value(OrderStatus.REQUIRED_REFUND.getStatus()));
+    }
+
 }
