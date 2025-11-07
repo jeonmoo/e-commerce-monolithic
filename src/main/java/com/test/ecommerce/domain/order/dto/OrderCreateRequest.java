@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class OrderRequest {
+public class OrderCreateRequest {
 
     private List<OrderRequestItem> orderItems;
     private Long userId;
