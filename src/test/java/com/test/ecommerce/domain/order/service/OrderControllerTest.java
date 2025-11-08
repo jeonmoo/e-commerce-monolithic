@@ -398,4 +398,58 @@ class OrderControllerTest extends TestContainerBase {
                 .andExpect(jsonPath("$.result.orderItems[?(@.id == " + orderItem1.getId() + ")].orderStatus").value(OrderStatus.REQUIRED_REFUND.getStatus()));
     }
 
+    @Test
+    @DisplayName("주문 부분 취소 - 주문 부분 취소를 한다.")
+    void refundOrderItemTest() throws Exception {
+        // given
+        Integer quantity = 10;
+        BigDecimal originPrice = BigDecimal.valueOf(100000);
+        BigDecimal finalPrice = BigDecimal.valueOf(80000);
+        BigDecimal discountPrice = BigDecimal.valueOf(20000);
+        String address = "경기도 성남시 분당구 정자일로 95";
+
+        OrderItem orderItem1 = OrderItem.builder()
+                .product(product)
+                .quantity(quantity)
+                .originPrice(originPrice)
+                .finalPrice(finalPrice)
+                .discountPrice(discountPrice)
+                .build();
+        orderItem1.setOrderStatus(OrderStatus.REQUIRED_REFUND);
+
+        OrderItem orderItem2 = OrderItem.builder()
+                .product(product)
+                .quantity(quantity)
+                .originPrice(originPrice)
+                .finalPrice(finalPrice)
+                .discountPrice(discountPrice)
+                .build();
+        orderItem2.setOrderStatus(OrderStatus.COMPLETE);
+        List<OrderItem> orderItems = List.of(orderItem1, orderItem2);
+
+        Order order = Order.builder()
+                .user(user)
+                .orderItems(orderItems)
+                .totalFinalPrice(finalPrice)
+                .totalOriginPrice(originPrice)
+                .totalDiscountPrice(discountPrice)
+                .address(address)
+                .build();
+
+        order.setOrderStatus(OrderStatus.COMPLETE);
+        orderItems.forEach(item -> item.setOrder(order));
+        orderRepository.save(order);
+
+        // when
+        ResultActions response = mockMvc.perform(post("/orders/{id}/{orderItemId}/refund", order.getId(), orderItem1.getId())
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isSuccess").value(true))
+                .andExpect(jsonPath("$.result.orderStatus").value(OrderStatus.PARTIALLY_REFUNDED.getStatus()))
+                .andExpect(jsonPath("$.result.orderItems[?(@.id == " + orderItem1.getId() + ")]").exists())
+                .andExpect(jsonPath("$.result.orderItems[?(@.id == " + orderItem1.getId() + ")].orderStatus").value(OrderStatus.REFUNDED.getStatus()));
+    }
 }
