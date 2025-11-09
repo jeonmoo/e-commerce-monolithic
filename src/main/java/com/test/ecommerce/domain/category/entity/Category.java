@@ -2,6 +2,7 @@ package com.test.ecommerce.domain.category.entity;
 
 import com.test.ecommerce.domain.product.entity.Product;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -55,4 +56,13 @@ public class Category {
     @Column
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @Builder
+    public Category(Long parentId, Integer depth, Integer sort, String categoryName) {
+        this.parentId = parentId;
+        this.depth = depth;
+        this.sort = sort;
+        this.categoryName = categoryName;
+        this.isDelete = false;
+    }
 }
