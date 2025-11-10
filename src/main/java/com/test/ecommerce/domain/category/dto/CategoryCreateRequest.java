@@ -5,11 +5,10 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class CategoryRequest {
+public class CategoryCreateRequest {
 
     private Long parentId;
     private Integer depth;
     private Integer sort;
     private String categoryName;
-    private Boolean isDelete;
 }
