@@ -63,13 +63,13 @@ public class Product {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Product(Category category, String productName, Integer quantity, BigDecimal finalPrice, BigDecimal originPrice, BigDecimal discountPrice, Boolean isDelete) {
+    public Product(Category category, String productName, Integer quantity, BigDecimal finalPrice, BigDecimal originPrice, BigDecimal discountPrice) {
         this.category = category;
         this.productName = productName;
         this.quantity = quantity;
         this.finalPrice = finalPrice;
         this.originPrice = originPrice;
         this.discountPrice = discountPrice;
-        this.isDelete = isDelete;
+        this.isDelete = false;
     }
 }
