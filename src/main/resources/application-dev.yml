@@ -4,7 +4,7 @@ spring:
       on-profile: dev
 
   datasource:
-    url: jdbc:mysql://ecommerce.cx6kge0eeual.ap-northeast-2.rds.amazonaws.com:3306/ecommerce_db
+    url: jdbc:mysql://localhost:3306/ecommerce_db
     username: root
     password: T2rOqyU9IG
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -16,7 +16,7 @@ spring:
 
   data:
     redis:
-      host: master.ecommerce-redis.a9dbpd.apn2.cache.amazonaws.com
+      host: 127.0.0.1
       port: 6379
       #      password: yourpassword # 설정한 경우만
       client-type: lettuce
