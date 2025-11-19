@@ -1,7 +1,7 @@
 package com.test.ecommerce.domain.order.controller;
 
 import com.test.ecommerce.common.ApiResponse;
-import com.test.ecommerce.domain.order.dto.OrderRequest;
+import com.test.ecommerce.domain.order.dto.OrderCreateRequest;
 import com.test.ecommerce.domain.order.dto.OrderResponse;
 import com.test.ecommerce.domain.order.service.OrderService;
 import jakarta.validation.Valid;
@@ -23,7 +23,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<OrderResponse>> registerOrder(@Valid @RequestBody OrderRequest request) {
+    public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@Valid @RequestBody OrderCreateRequest request) {
         OrderResponse response = orderService.registerOrder(request);
         return ApiResponse.success(response);
     }
@@ -36,7 +36,7 @@ public class OrderController {
 
     @PostMapping("/{id}/cancel")
     public ResponseEntity<ApiResponse<OrderResponse>> cancelOrder(@PathVariable Long id
-            , @RequestBody OrderRequest request) {
+            , @RequestBody OrderCreateRequest request) {
         OrderResponse result = orderService.cancelOrder(id, request);
         return ApiResponse.success(result);
     }
