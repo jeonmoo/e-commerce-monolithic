@@ -11,16 +11,24 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 @EnableCaching
 @Configuration
@@ -70,6 +78,43 @@ public class RedisConfig {
         return template;
     }
 
+    @Bean
+    public CacheManager cacheManager(LettuceConnectionFactory connectionFactory) {
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(createObjectMapper());
+
+        // 기본 캐시 설정
+        RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(30))
+                .serializeKeysWith(
+                        RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())
+                )
+                .serializeValuesWith(
+                        RedisSerializationContext.SerializationPair.fromSerializer(serializer)
+                )
+                .disableCachingNullValues();
+
+        // 개별 캐시 설정
+        Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
+
+        cacheConfigurations.put("categoryList::allCategories",
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .entryTtl(Duration.ofHours(4))
+                        .serializeKeysWith(
+                                RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())
+                        )
+                        .serializeValuesWith(
+                                RedisSerializationContext.SerializationPair.fromSerializer(serializer)
+                        )
+                        .disableCachingNullValues()
+        );
+
+        return RedisCacheManager.builder(connectionFactory)
+                .cacheDefaults(defaultConfig)
+                .withInitialCacheConfigurations(cacheConfigurations)
+                .transactionAware()
+                .build();
+    }
+
     /**
      * Jackson ObjectMapper 생성 및 설정
      */
@@ -86,6 +131,7 @@ public class RedisConfig {
         );
 
         objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerModule(new com.fasterxml.jackson.module.paramnames.ParameterNamesModule());  // 추가!
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
