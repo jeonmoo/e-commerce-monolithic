@@ -22,6 +22,15 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
+  # ----------------------------------------------------
+  # 3. JMeter 성능 테스트 메트릭 수집 설정 (추가됨)
+  # ----------------------------------------------------
+  - job_name: 'jmeter'
+    # JMeter Prometheus Listener의 기본 포트 9270 사용
+    static_configs:
+      # Mac 호스트에서 실행 중인 JMeter에 접근하기 위해 'host.docker.internal' 사용
+      - targets: [ 'host.docker.internal:9270' ]
+
 alerting:
   alertmanagers:
     - static_configs:
