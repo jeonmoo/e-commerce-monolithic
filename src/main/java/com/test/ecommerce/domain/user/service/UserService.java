@@ -8,7 +8,8 @@ import com.test.ecommerce.domain.order.enums.OrderStatus;
 import com.test.ecommerce.domain.order.mapper.OrderItemMapper;
 import com.test.ecommerce.domain.order.mapper.OrderMapper;
 import com.test.ecommerce.domain.order.repository.OrderRepository;
-import com.test.ecommerce.domain.user.dto.UserRequest;
+import com.test.ecommerce.domain.user.dto.UserCreateRequest;
+import com.test.ecommerce.domain.user.dto.UserModifyRequest;
 import com.test.ecommerce.domain.user.dto.UserResponse;
 import com.test.ecommerce.domain.user.entity.User;
 import com.test.ecommerce.domain.user.enums.UserRole;
@@ -41,7 +42,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse createUser(UserRequest request) {
+    public UserResponse createUser(UserCreateRequest request) {
         User user = UserMapper.INSTANCE.toUser(request);
         user.setUserRole(UserRole.USER);
         User savedUser = userRepository.save(user);
@@ -50,12 +51,10 @@ public class UserService {
 
     @Transactional
     @CachePut(value = "user", key = "#id")
-    public UserResponse modifyUser(Long id, UserRequest request) {
+    public UserResponse modifyUser(Long id, UserModifyRequest request) {
         User user = findById(id);
-
         user.setEmail(request.getEmail());
         user.setPhoneNumber(request.getPhoneNumber());
-
         return UserMapper.INSTANCE.toResponse(user);
     }
 
