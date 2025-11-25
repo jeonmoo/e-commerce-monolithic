@@ -1,4 +1,4 @@
-package com.test.ecommerce.domain.order.service;
+package com.test.ecommerce.domain.order.controller;
 
 import com.test.ecommerce.config.TestContainerBase;
 import com.test.ecommerce.domain.category.entity.Category;
@@ -78,11 +78,11 @@ class OrderControllerTest extends TestContainerBase {
                 .build();
         userRepository.save(user);
 
-        Category category = new Category();
-        category.setDepth(0);
-        category.setSort(0);
-        category.setCategoryName("Digital");
-        category.setIsDelete(false);
+        Category category = Category.builder()
+                .depth(0)
+                .sort(0)
+                .categoryName("Digital")
+                .build();
         categoryRepository.save(category);
 
         product = Product.builder()
