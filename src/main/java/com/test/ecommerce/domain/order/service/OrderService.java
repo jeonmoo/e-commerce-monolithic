@@ -2,13 +2,12 @@ package com.test.ecommerce.domain.order.service;
 
 import com.test.ecommerce.common.GlobalException;
 import com.test.ecommerce.common.exceptionCode.OrderExceptionCode;
-import com.test.ecommerce.domain.order.dto.OrderRequest;
+import com.test.ecommerce.domain.order.dto.OrderCreateRequest;
 import com.test.ecommerce.domain.order.dto.OrderResponse;
 import com.test.ecommerce.domain.order.entity.Order;
 import com.test.ecommerce.domain.order.entity.OrderItem;
 import com.test.ecommerce.domain.order.mapper.OrderMapper;
 import com.test.ecommerce.domain.order.repository.OrderRepository;
-import com.test.ecommerce.domain.payment.repository.PaymentRepository;
 import com.test.ecommerce.domain.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,6 @@ public class OrderService {
 
     private final OrderSupportService orderSupportService;
     private final OrderRepository orderRepository;
-    private final PaymentRepository paymentRepository;
 
     private Order findOrder(Long id) {
         return orderRepository.findById(id)
@@ -35,7 +33,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse registerOrder(OrderRequest request) {
+    public OrderResponse registerOrder(OrderCreateRequest request) {
         List<Product> products = orderSupportService.getOrderInProduct(request);
         orderSupportService.checkProductStock(request.getOrderItems(), products);
         orderSupportService.reduceStock(request.getOrderItems(), products);
@@ -59,7 +57,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse cancelOrder(Long id, OrderRequest request) {
+    public OrderResponse cancelOrder(Long id, OrderCreateRequest request) {
         Order order = findOrder(id);
         String reason = request.getReason();
 
