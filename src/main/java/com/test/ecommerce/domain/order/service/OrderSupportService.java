@@ -4,7 +4,7 @@ import com.test.ecommerce.common.GlobalException;
 import com.test.ecommerce.common.exceptionCode.OrderExceptionCode;
 import com.test.ecommerce.common.exceptionCode.ProductExceptionCode;
 import com.test.ecommerce.common.exceptionCode.UserExceptionCode;
-import com.test.ecommerce.domain.order.dto.OrderRequest;
+import com.test.ecommerce.domain.order.dto.OrderCreateRequest;
 import com.test.ecommerce.domain.order.dto.OrderResponse;
 import com.test.ecommerce.domain.order.entity.Order;
 import com.test.ecommerce.domain.order.entity.OrderItem;
@@ -51,7 +51,7 @@ public class OrderSupportService {
         return orderResponse;
     }
 
-    protected Order initOrder(OrderRequest request, List<Product> products) {
+    protected Order initOrder(OrderCreateRequest request, List<Product> products) {
         Order order = OrderMapper.INSTANCE.toOrder(request);
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.NOT_FOUND_USER));
@@ -64,7 +64,7 @@ public class OrderSupportService {
         return order;
     }
 
-    private List<OrderItem> initOrderItem(OrderRequest request, List<Product> products) {
+    private List<OrderItem> initOrderItem(OrderCreateRequest request, List<Product> products) {
         Map<Long, Product> productMap = products.stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
         return request.getOrderItems().stream()
@@ -82,25 +82,25 @@ public class OrderSupportService {
     }
 
     @Transactional
-    protected List<Product> getOrderInProduct(OrderRequest request) {
+    protected List<Product> getOrderInProduct(OrderCreateRequest request) {
         List<Long> productIds = request.getOrderItems().stream()
-                .map(OrderRequest.OrderRequestItem::getProductId)
+                .map(OrderCreateRequest.OrderRequestItem::getProductId)
                 .toList();
 
-        List<Product> products = productRepository.findByIdIn(productIds);
+        List<Product> products = productRepository.findByIdInForUpdate(productIds);
         if (products.size() != request.getOrderItems().size()) {
             throw new GlobalException(ProductExceptionCode.NOT_FOUND_PRODUCT);
         }
         return products;
     }
 
-    protected void checkProductStock(List<OrderRequest.OrderRequestItem> orderItems, List<Product> products) {
+    protected void checkProductStock(List<OrderCreateRequest.OrderRequestItem> orderItems, List<Product> products) {
         Map<Long, Product> productMap = products.stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
         orderItems.forEach(item -> {
             Product product = productMap.get(item.getProductId());
             Integer stock = product.getQuantity();
-            if (item.getQuantity() > stock) {
+            if (stock > 0 && stock >= item.getQuantity()) {
                 throw new GlobalException(ProductExceptionCode.OUT_OF_STOCK);
             }
         });
@@ -138,7 +138,7 @@ public class OrderSupportService {
     }
 
     @Transactional
-    protected void reduceStock(List<OrderRequest.OrderRequestItem> orderItems, List<Product> products) {
+    protected void reduceStock(List<OrderCreateRequest.OrderRequestItem> orderItems, List<Product> products) {
         Map<Long, Product> productMap = products.stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
         orderItems.forEach(item -> {
@@ -217,6 +217,22 @@ public class OrderSupportService {
 
     @Transactional
     protected void refundOrder(Order order) {
+        // 재고 복구시 비관적 락을 걸기 위해 조회
+        List<Long> productIds = order.getOrderItems().stream()
+                        .map(item -> item.getProduct().getId())
+                        .toList();
+        Map<Long, Integer> restoreQuantityMap = order.getOrderItems().stream()
+                .collect(Collectors.toMap(
+                        item -> item.getProduct().getId(),
+                        OrderItem::getQuantity,
+                        Integer::sum    // 중복키 발생시 기존 value에 sum
+                ));
+
+        List<Product> products = productRepository.findByIdInForUpdate(productIds);
+        products.forEach(product -> {
+            product.setQuantity(product.getQuantity() + restoreQuantityMap.get(product.getId()));
+        });
+
         order.setOrderStatus(OrderStatus.REFUNDED);
         order.getOrderItems().forEach(item -> item.setOrderStatus(OrderStatus.REFUNDED));
 
