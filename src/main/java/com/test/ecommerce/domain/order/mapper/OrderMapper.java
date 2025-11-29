@@ -1,6 +1,6 @@
 package com.test.ecommerce.domain.order.mapper;
 
-import com.test.ecommerce.domain.order.dto.OrderRequest;
+import com.test.ecommerce.domain.order.dto.OrderCreateRequest;
 import com.test.ecommerce.domain.order.dto.OrderResponse;
 import com.test.ecommerce.domain.order.entity.Order;
 import org.mapstruct.Mapper;
@@ -11,7 +11,7 @@ public interface OrderMapper {
 
     OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
 
-    Order toOrder(OrderRequest request);
+    Order toOrder(OrderCreateRequest request);
 
     OrderResponse toOrderResponse(Order order);
 }
