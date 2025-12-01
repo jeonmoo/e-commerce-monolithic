@@ -96,9 +96,21 @@ public class RedisConfig {
         // 개별 캐시 설정
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
 
-        cacheConfigurations.put("categoryList::allCategories",
+        cacheConfigurations.put("categoryList",
                 RedisCacheConfiguration.defaultCacheConfig()
                         .entryTtl(Duration.ofHours(4))
+                        .serializeKeysWith(
+                                RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())
+                        )
+                        .serializeValuesWith(
+                                RedisSerializationContext.SerializationPair.fromSerializer(serializer)
+                        )
+                        .disableCachingNullValues()
+        );
+
+        cacheConfigurations.put("productDetail",
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .entryTtl(Duration.ofMinutes(1))
                         .serializeKeysWith(
                                 RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())
                         )
