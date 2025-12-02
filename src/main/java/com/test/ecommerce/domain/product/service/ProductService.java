@@ -5,10 +5,7 @@ import com.test.ecommerce.common.exceptionCode.CategoryExceptionCode;
 import com.test.ecommerce.common.exceptionCode.ProductExceptionCode;
 import com.test.ecommerce.domain.category.entity.Category;
 import com.test.ecommerce.domain.category.repository.CategoryRepository;
-import com.test.ecommerce.domain.product.dto.ProductRankResponse;
-import com.test.ecommerce.domain.product.dto.ProductRequest;
-import com.test.ecommerce.domain.product.dto.ProductResponse;
-import com.test.ecommerce.domain.product.dto.ProductSearchRequest;
+import com.test.ecommerce.domain.product.dto.*;
 import com.test.ecommerce.domain.product.entity.Product;
 import com.test.ecommerce.domain.product.mapper.ProductMapper;
 import com.test.ecommerce.domain.product.repository.ProductQueryRepository;
@@ -56,7 +53,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse createProduct(ProductRequest request) {
+    public ProductResponse createProduct(ProductCreateRequest request) {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new GlobalException(CategoryExceptionCode.NOT_FOUND_CATEGORY));
         Product product = ProductMapper.INSTANCE.toProduct(request);
@@ -67,7 +64,7 @@ public class ProductService {
 
     @Transactional
     @CachePut(value = "productDetail", key = "#id")
-    public ProductResponse modifyProduct(Long id, ProductRequest request) {
+    public ProductResponse modifyProduct(Long id, ProductModifyRequest request) {
         Product product = findById(id);
         updateProduct(product, request);
         return ProductMapper.INSTANCE.toResponse(product);
@@ -81,7 +78,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void updateProduct(Product product, ProductRequest request) {
+    public void updateProduct(Product product, ProductModifyRequest request) {
         Long categoryId = request.getCategoryId();
         Category category = null;
         if (categoryId != null) {
@@ -99,7 +96,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse applyDiscount(Long id, ProductRequest request) {
+    public ProductResponse applyDiscount(Long id, ProductApplyDiscountRequest request) {
         Product product = findById(id);
         BigDecimal discountPrice = request.getDiscountPrice();
         productSupportService.initDiscountToProduct(product, discountPrice);

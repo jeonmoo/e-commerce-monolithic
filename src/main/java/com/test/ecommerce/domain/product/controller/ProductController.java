@@ -1,10 +1,7 @@
 package com.test.ecommerce.domain.product.controller;
 
 import com.test.ecommerce.common.ApiResponse;
-import com.test.ecommerce.domain.product.dto.ProductRankResponse;
-import com.test.ecommerce.domain.product.dto.ProductRequest;
-import com.test.ecommerce.domain.product.dto.ProductResponse;
-import com.test.ecommerce.domain.product.dto.ProductSearchRequest;
+import com.test.ecommerce.domain.product.dto.*;
 import com.test.ecommerce.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,20 +23,20 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ProductResponse>>> getProducts(ProductSearchRequest request) {
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getProducts(@ModelAttribute ProductSearchRequest request) {
         List<ProductResponse> result = productService.getProducts(request);
         return ApiResponse.success(result);
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ProductResponse>> createProduct(@RequestBody ProductRequest request) {
+    public ResponseEntity<ApiResponse<ProductResponse>> createProduct(@RequestBody ProductCreateRequest request) {
         ProductResponse response = productService.createProduct(request);
         return ApiResponse.success(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(@PathVariable Long id
-            , @RequestBody ProductRequest request) {
+    public ResponseEntity<ApiResponse<ProductResponse>> modifyProduct(@PathVariable Long id
+            , @RequestBody ProductModifyRequest request) {
         ProductResponse response = productService.modifyProduct(id, request);
         return ApiResponse.success(response);
     }
@@ -51,13 +48,13 @@ public class ProductController {
     }
 
     @PostMapping("/{id}/discount")
-    public ResponseEntity<ApiResponse<Object>> applyDiscount(@PathVariable Long id, @RequestBody ProductRequest request) {
+    public ResponseEntity<ApiResponse<ProductResponse>> applyDiscount(@PathVariable Long id, @RequestBody ProductApplyDiscountRequest request) {
         ProductResponse result = productService.applyDiscount(id, request);
         return ApiResponse.success(result);
     }
 
     @GetMapping("/rank")
-    public ResponseEntity<ApiResponse<Object>> getProductRank(@RequestParam Long startIndex, @RequestParam Long endIndex) {
+    public ResponseEntity<ApiResponse<List<ProductRankResponse>>> getProductRank(@RequestParam Long startIndex, @RequestParam Long endIndex) {
         List<ProductRankResponse> result = productService.getProductRank(startIndex, endIndex);
         return ApiResponse.success(result);
     }

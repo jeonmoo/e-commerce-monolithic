@@ -1,7 +1,7 @@
 package com.test.ecommerce.domain.product.mapper;
 
 import com.test.ecommerce.domain.product.dto.ProductRankResponse;
-import com.test.ecommerce.domain.product.dto.ProductRequest;
+import com.test.ecommerce.domain.product.dto.ProductCreateRequest;
 import com.test.ecommerce.domain.product.dto.ProductResponse;
 import com.test.ecommerce.domain.product.entity.Product;
 import org.mapstruct.Mapper;
@@ -13,7 +13,7 @@ public interface ProductMapper {
 
     ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 
-    Product toProduct(ProductRequest request);
+    Product toProduct(ProductCreateRequest request);
 
     @Mapping(target = "categoryId", source = "category.id")
     ProductResponse toResponse(Product product);
