@@ -2,7 +2,8 @@ package com.test.ecommerce.domain.user.controller;
 
 import com.test.ecommerce.common.ApiResponse;
 import com.test.ecommerce.domain.order.dto.OrderResponse;
-import com.test.ecommerce.domain.user.dto.UserRequest;
+import com.test.ecommerce.domain.user.dto.UserCreateRequest;
+import com.test.ecommerce.domain.user.dto.UserModifyRequest;
 import com.test.ecommerce.domain.user.dto.UserResponse;
 import com.test.ecommerce.domain.user.service.UserService;
 import jakarta.validation.Valid;
@@ -26,13 +27,13 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<UserResponse>> createUser(@Valid @RequestBody UserRequest request) {
+    public ResponseEntity<ApiResponse<UserResponse>> createUser(@Valid @RequestBody UserCreateRequest request) {
         UserResponse response = userService.createUser(request);
         return ApiResponse.success(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<UserResponse>> modifyUser(@PathVariable Long id, @Valid @RequestBody UserRequest request) {
+    public ResponseEntity<ApiResponse<UserResponse>> modifyUser(@PathVariable Long id, @Valid @RequestBody UserModifyRequest request) {
         UserResponse response = userService.modifyUser(id, request);
         return ApiResponse.success(response);
     }
