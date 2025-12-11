@@ -59,7 +59,7 @@
 ---
 
 ## 📊 ERD
-<details>
+<details open>
 <summary><b>🗂 클릭으로 보기 데이터베이스 ERD 다이어그램 보기</b></summary>
 
 <br>
@@ -109,7 +109,7 @@
 - **조건**: 락 적용 후 측정
 
 ### 결과 요약
-<details>
+<details open>
 <summary><b>📊 클릭으로 성능 테스트 결과 상세 보기</b></summary>
 
 <br>
