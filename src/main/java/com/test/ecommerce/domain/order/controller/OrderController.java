@@ -1,6 +1,7 @@
 package com.test.ecommerce.domain.order.controller;
 
 import com.test.ecommerce.common.ApiResponse;
+import com.test.ecommerce.domain.order.dto.OrderCancelRequest;
 import com.test.ecommerce.domain.order.dto.OrderCreateRequest;
 import com.test.ecommerce.domain.order.dto.OrderResponse;
 import com.test.ecommerce.domain.order.service.OrderService;
@@ -36,7 +37,7 @@ public class OrderController {
 
     @PostMapping("/{id}/cancel")
     public ResponseEntity<ApiResponse<OrderResponse>> cancelOrder(@PathVariable Long id
-            , @RequestBody OrderCreateRequest request) {
+            , @RequestBody OrderCancelRequest request) {
         OrderResponse result = orderService.cancelOrder(id, request);
         return ApiResponse.success(result);
     }
