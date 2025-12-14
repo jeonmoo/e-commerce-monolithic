@@ -2,11 +2,13 @@ package com.test.ecommerce.domain.order.service;
 
 import com.test.ecommerce.common.GlobalException;
 import com.test.ecommerce.common.exceptionCode.OrderExceptionCode;
+import com.test.ecommerce.domain.order.dto.OrderCancelRequest;
 import com.test.ecommerce.domain.order.dto.OrderCreateRequest;
 import com.test.ecommerce.domain.order.dto.OrderResponse;
 import com.test.ecommerce.domain.order.entity.Order;
 import com.test.ecommerce.domain.order.entity.OrderItem;
 import com.test.ecommerce.domain.order.mapper.OrderMapper;
+import com.test.ecommerce.domain.order.repository.OrderQueryRepository;
 import com.test.ecommerce.domain.order.repository.OrderRepository;
 import com.test.ecommerce.domain.product.entity.Product;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +23,15 @@ public class OrderService {
 
     private final OrderSupportService orderSupportService;
     private final OrderRepository orderRepository;
+    private final OrderQueryRepository orderQueryRepository;
 
     private Order findOrder(Long id) {
         return orderRepository.findById(id)
+                .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER));
+    }
+
+    private Order findOrderForUpdate(Long id) {
+        return orderQueryRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUND_ORDER));
     }
 
@@ -41,7 +49,6 @@ public class OrderService {
         Order order = orderSupportService.initOrder(request, products);
         Order savedOrder = orderRepository.save(order);
         orderSupportService.pay(savedOrder);
-
         orderSupportService.updateProductScore(order.getOrderItems());
 
         return orderSupportService.toResponse(savedOrder);
@@ -49,16 +56,15 @@ public class OrderService {
 
     @Transactional
     public OrderResponse completeOrder(Long id) {
-        Order order = findOrder(id);
-
+        Order order = findOrderForUpdate(id);
         orderSupportService.checkOrderPending(order);
         orderSupportService.completeOrder(order);
         return OrderMapper.INSTANCE.toOrderResponse(order);
     }
 
     @Transactional
-    public OrderResponse cancelOrder(Long id, OrderCreateRequest request) {
-        Order order = findOrder(id);
+    public OrderResponse cancelOrder(Long id, OrderCancelRequest request) {
+        Order order = findOrderForUpdate(id);
         String reason = request.getReason();
 
         orderSupportService.checkOrderPending(order);
@@ -68,8 +74,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse requestRefundOrder(Long id) {
-        Order order = findOrder(id);
-
+        Order order = findOrderForUpdate(id);
         orderSupportService.checkOrderRefundRequest(order);
         orderSupportService.applyRefundRequestOrder(order);
         return OrderMapper.INSTANCE.toOrderResponse(order);
@@ -77,7 +82,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse requestRefundOrderItem(Long id, Long orderItemId) {
-        Order order = findOrder(id);
+        Order order = findOrderForUpdate(id);
 
         OrderItem orderItem = order.getOrderItems().stream()
                 .filter(item -> item.getId().equals(orderItemId))
@@ -91,7 +96,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse refundOrder(Long id) {
-        Order order = findOrder(id);
+        Order order = findOrderForUpdate(id);
 
         orderSupportService.checkRequestRefundOrder(order);
         orderSupportService.refundOrder(order);
@@ -100,7 +105,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse refundOrderItem(Long id, Long orderItemId) {
-        Order order = findOrder(id);
+        Order order = findOrderForUpdate(id);
 
         OrderItem orderItem = order.getOrderItems().stream()
                 .filter(item -> item.getId().equals(orderItemId))

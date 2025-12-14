@@ -87,7 +87,7 @@ public class OrderSupportService {
                 .map(OrderCreateRequest.OrderRequestItem::getProductId)
                 .toList();
 
-        List<Product> products = productRepository.findByIdInForUpdate(productIds);
+        List<Product> products = productRepository.findByIdIn(productIds);
         if (products.size() != request.getOrderItems().size()) {
             throw new GlobalException(ProductExceptionCode.NOT_FOUND_PRODUCT);
         }
@@ -100,7 +100,7 @@ public class OrderSupportService {
         orderItems.forEach(item -> {
             Product product = productMap.get(item.getProductId());
             Integer stock = product.getQuantity();
-            if (stock > 0 && stock >= item.getQuantity()) {
+            if (stock < 1 && stock < item.getQuantity()) {
                 throw new GlobalException(ProductExceptionCode.OUT_OF_STOCK);
             }
         });
@@ -228,10 +228,8 @@ public class OrderSupportService {
                         Integer::sum    // 중복키 발생시 기존 value에 sum
                 ));
 
-        List<Product> products = productRepository.findByIdInForUpdate(productIds);
-        products.forEach(product -> {
-            product.setQuantity(product.getQuantity() + restoreQuantityMap.get(product.getId()));
-        });
+        List<Product> products = productRepository.findByIdIn(productIds);
+        products.forEach(product -> product.setQuantity(product.getQuantity() + restoreQuantityMap.get(product.getId())));
 
         order.setOrderStatus(OrderStatus.REFUNDED);
         order.getOrderItems().forEach(item -> item.setOrderStatus(OrderStatus.REFUNDED));
