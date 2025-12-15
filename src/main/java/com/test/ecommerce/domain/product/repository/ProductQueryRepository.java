@@ -22,7 +22,8 @@ public class ProductQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     public List<Product> getProducts(ProductSearchRequest request) {
-        OrderSpecifier<BigDecimal> orderSpecifier = request.getIsPriceAsc() ? product.finalPrice.asc() : product.finalPrice.desc();
+        OrderSpecifier<BigDecimal> orderSpecifier = Objects.nonNull(request.getIsPriceAsc())
+                && request.getIsPriceAsc() ? product.finalPrice.asc() : product.finalPrice.desc();
         return queryFactory.selectFrom(product)
                 .where(
                         containName(request.getProductName())
