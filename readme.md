@@ -4,6 +4,7 @@
 * 대용량 트래픽을 고려한 모놀리식 E-commerce 백엔드 서버
 * 목표: 초당 100건 이상의 요청 처리가 가능한 시스템 구현
 * 결과: 초당 TPS 약 83 달성 (목표 대비 83% 달성)
+* URL: https://github.com/jeonmoo/e-commerce-monolithic
 
 ---
 
