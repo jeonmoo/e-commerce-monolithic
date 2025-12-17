@@ -205,7 +205,7 @@
    ./gradlew bootRun
    ```
 
-### 접속 정보
+### 접속 정보 (로컬 기준)
 - **Swagger UI**: http://localhost:8080/swagger-ui.html
 - **Grafana 대시보드**: http://localhost:3000
     - ID: admin / PW: admin
