@@ -4,13 +4,22 @@ import com.test.ecommerce.config.TestContainerBase;
 import com.test.ecommerce.domain.category.entity.Category;
 import com.test.ecommerce.domain.category.repository.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 @ActiveProfiles("test")
@@ -48,4 +57,40 @@ public class CategoryControllerTest extends TestContainerBase {
                 .build();
         categoryRepository.save(category);
     }
+
+    @Test
+    @DisplayName("카테고리 생성 - 카테고리를 생성한다.")
+    void createCategoryTest() throws Exception {
+        // given
+        int parentId = 0;
+        int depth = 1;
+        int sort = 1;
+        String categoryName = "IT";
+
+        String requestBody = """
+                {
+                  "parentId": %d,
+                  "depth": %d,
+                  "sort": %d,
+                  "categoryName": "%s"
+                }
+                """.formatted(parentId, depth, sort, categoryName);
+
+        // when
+        ResultActions response = mockMvc.perform(post("/category")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody));
+
+        // then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isSuccess").value(true))
+                .andExpect(jsonPath("$.result.parentId").value(parentId))
+                .andExpect(jsonPath("$.result.depth").value(depth))
+                .andExpect(jsonPath("$.result.sort").value(sort))
+                .andExpect(jsonPath("$.result.categoryName").value(categoryName))
+                .andExpect(jsonPath("$.result.isDelete").value(false));
+    }
+
+
 }
