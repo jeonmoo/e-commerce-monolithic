@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -90,6 +91,25 @@ public class CategoryControllerTest extends TestContainerBase {
                 .andExpect(jsonPath("$.result.sort").value(sort))
                 .andExpect(jsonPath("$.result.categoryName").value(categoryName))
                 .andExpect(jsonPath("$.result.isDelete").value(false));
+    }
+
+    @Test
+    @DisplayName("카테고리 조회 - 카테고리를 조회한다.")
+    void getCategoriesTest() throws Exception {
+        // given & when
+        ResultActions response = mockMvc.perform(get("/category")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isSuccess").value(true))
+                .andExpect(jsonPath("$.result").isArray())
+                .andExpect(jsonPath("$.result[0].parentId").value(category.getParentId()))
+                .andExpect(jsonPath("$.result[0].depth").value(category.getDepth()))
+                .andExpect(jsonPath("$.result[0].sort").value(category.getSort()))
+                .andExpect(jsonPath("$.result[0].categoryName").value(category.getCategoryName()))
+                .andExpect(jsonPath("$.result[0].isDelete").value(category.getIsDelete()));
     }
 
 
