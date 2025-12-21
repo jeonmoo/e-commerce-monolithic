@@ -16,8 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -110,6 +109,37 @@ public class CategoryControllerTest extends TestContainerBase {
                 .andExpect(jsonPath("$.result[0].sort").value(category.getSort()))
                 .andExpect(jsonPath("$.result[0].categoryName").value(category.getCategoryName()))
                 .andExpect(jsonPath("$.result[0].isDelete").value(category.getIsDelete()));
+    }
+
+    @Test
+    @DisplayName("케테고리 수정 - 카테고리를 수정한다.")
+    void modifyCategoryTest() throws Exception {
+        // given
+        int parentId = 1;
+        int depth = 2;
+        int sort = 2;
+        String categoryName = "cloth";
+
+        String requestBody = """
+                {
+                  "parentId": %d,
+                  "depth": %d,
+                  "sort": %d,
+                  "categoryName": "%s"
+                }
+                """.formatted(parentId, depth, sort, categoryName);
+
+        ResultActions response = mockMvc.perform(put("/category/{id}", category.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody));
+
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isSuccess").value(true))
+                .andExpect(jsonPath("$.result.parentId").value(parentId))
+                .andExpect(jsonPath("$.result.depth").value(depth))
+                .andExpect(jsonPath("$.result.sort").value(sort))
+                .andExpect(jsonPath("$.result.categoryName").value(categoryName));
     }
 
 
