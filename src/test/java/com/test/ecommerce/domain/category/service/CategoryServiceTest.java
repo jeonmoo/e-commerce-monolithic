@@ -1,7 +1,8 @@
 package com.test.ecommerce.domain.category.service;
 
 import com.test.ecommerce.config.TestContainerBase;
-import com.test.ecommerce.domain.category.dto.CategoryRequest;
+import com.test.ecommerce.domain.category.dto.CategoryCreateRequest;
+import com.test.ecommerce.domain.category.dto.CategoryModifyRequest;
 import com.test.ecommerce.domain.category.dto.CategoryResponse;
 import com.test.ecommerce.domain.category.entity.Category;
 import com.test.ecommerce.domain.category.repository.CategoryRepository;
@@ -49,11 +50,10 @@ class CategoryServiceTest extends TestContainerBase {
     void createCategoryTest() {
         // given
         String categoryName = "테스트 카테고리";
-        CategoryRequest request = CategoryRequest.builder()
+        CategoryCreateRequest request = CategoryCreateRequest.builder()
                 .parentId(0L)
                 .depth(0)
                 .sort(0)
-                .isDelete(false)
                 .categoryName(categoryName)
                 .build();
 
@@ -77,11 +77,10 @@ class CategoryServiceTest extends TestContainerBase {
         boolean isDelete = false;
         String categoryName = "테스트 카테고리";
 
-        CategoryRequest request = CategoryRequest.builder()
+        CategoryCreateRequest request = CategoryCreateRequest.builder()
                 .parentId(parentId)
                 .depth(depth)
                 .sort(sort)
-                .isDelete(isDelete)
                 .categoryName(categoryName)
                 .build();
 
@@ -110,11 +109,10 @@ class CategoryServiceTest extends TestContainerBase {
         boolean isDelete = false;
         String categoryName = "테스트 카테고리";
 
-        CategoryRequest request = CategoryRequest.builder()
+        CategoryCreateRequest request = CategoryCreateRequest.builder()
                 .parentId(parentId)
                 .depth(depth)
                 .sort(sort)
-                .isDelete(isDelete)
                 .categoryName(categoryName)
                 .build();
 
@@ -142,14 +140,12 @@ class CategoryServiceTest extends TestContainerBase {
         long parentId = 0L;
         int depth = 0;
         int sort = 0;
-        boolean isDelete = false;
         String categoryName = "테스트 카테고리";
 
-        CategoryRequest request = CategoryRequest.builder()
+        CategoryCreateRequest request = CategoryCreateRequest.builder()
                 .parentId(parentId)
                 .depth(depth)
                 .sort(sort)
-                .isDelete(isDelete)
                 .categoryName(categoryName)
                 .build();
 
@@ -163,7 +159,7 @@ class CategoryServiceTest extends TestContainerBase {
         int modifiedSort = 1;
         String modifiedCategoryName = "신규 카테고리";
         long categoryId = category.getId();
-        CategoryRequest modifyRequest = CategoryRequest.builder()
+        CategoryModifyRequest modifyRequest = CategoryModifyRequest.builder()
                 .parentId(modifiedParentId)
                 .depth(modifiedDepth)
                 .sort(modifiedSort)
@@ -173,7 +169,7 @@ class CategoryServiceTest extends TestContainerBase {
         categoryService.modifyCategory(categoryId, modifyRequest);
 
         // then
-        Category modifiedCategory = categoryRepository.findById(categoryId).get();
+        Category modifiedCategory = categoryRepository.findById(categoryId).orElseThrow();
 
         assertThat(modifiedCategory.getParentId()).isEqualTo(modifiedParentId);
         assertThat(modifiedCategory.getDepth()).isEqualTo(modifiedDepth);
@@ -186,11 +182,10 @@ class CategoryServiceTest extends TestContainerBase {
     void removeCategoryTest() {
         // given
         String categoryName = "테스트 카테고리";
-        CategoryRequest request = CategoryRequest.builder()
+        CategoryCreateRequest request = CategoryCreateRequest.builder()
                 .parentId(0L)
                 .depth(0)
                 .sort(0)
-                .isDelete(false)
                 .categoryName(categoryName)
                 .build();
         categoryService.createCategory(request);
