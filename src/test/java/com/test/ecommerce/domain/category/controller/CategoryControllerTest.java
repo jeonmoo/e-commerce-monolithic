@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -142,5 +143,21 @@ public class CategoryControllerTest extends TestContainerBase {
                 .andExpect(jsonPath("$.result.categoryName").value(categoryName));
     }
 
+    @Test
+    @DisplayName("케테고리 삭제 - 카테고리를 삭제한다.")
+    void removeCategoryTest() throws Exception {
+        // given & when
+        ResultActions response = mockMvc.perform(delete("/category/{id}", category.getId())
+                .contentType(MediaType.APPLICATION_JSON));
 
+        // then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isSuccess").value(true));
+
+        Category deletedCategory = categoryRepository.findById(category.getId()).orElseThrow();
+        assertThat(deletedCategory.getIsDelete())
+                .as("카테고리 삭제는 isDelete == true")
+                .isTrue();
+    }
 }
