@@ -18,7 +18,7 @@
 * **CI/CD**: Jenkins
 * **캐시**: Redis 8.2
 * **메트릭 모니터링**: Prometheus, Grafana
-* **로그 모니터링**: ELK Stack (Elasticsearch, Logstash, Kibana)
+* **로그 모니터링**: ELK Stack (FileBeat, Logstash, Elasticsearch, Kibana)
 * **테스트**: Spring Boot TestContainers, Mockito, JMeter
 
 
