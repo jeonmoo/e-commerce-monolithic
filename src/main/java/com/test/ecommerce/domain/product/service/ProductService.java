@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
@@ -45,8 +47,8 @@ public class ProductService {
         return ProductMapper.INSTANCE.toResponse(product);
     }
 
-    public List<ProductResponse> getProducts(ProductSearchRequest request) {
-        List<Product> products = productQueryRepository.getProducts(request);
+    public List<ProductResponse> getProducts(ProductSearchRequest request, Pageable pageable) {
+        Page<Product> products = productQueryRepository.getProducts(request, pageable);
         return products.stream()
                 .map(ProductMapper.INSTANCE::toResponse)
                 .toList();

@@ -13,5 +13,4 @@ public class ProductSearchRequest {
     private BigDecimal minPrice;
     private BigDecimal maxPrice;
     private Long categoryId;
-    private Boolean isPriceAsc;
 }

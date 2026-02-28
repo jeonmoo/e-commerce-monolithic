@@ -4,6 +4,8 @@ import com.test.ecommerce.common.ApiResponse;
 import com.test.ecommerce.domain.product.dto.*;
 import com.test.ecommerce.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +25,9 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ProductResponse>>> getProducts(@ModelAttribute ProductSearchRequest request) {
-        List<ProductResponse> result = productService.getProducts(request);
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getProducts(@ModelAttribute ProductSearchRequest request,
+                                                                          @ParameterObject Pageable pageable) {
+        List<ProductResponse> result = productService.getProducts(request, pageable);
         return ApiResponse.success(result);
     }
 
