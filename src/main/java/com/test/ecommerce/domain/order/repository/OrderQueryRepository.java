@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.test.ecommerce.domain.order.entity.QOrder.orders;
+import static com.test.ecommerce.domain.order.entity.QOrder.order;
 import static com.test.ecommerce.domain.order.entity.QOrderItem.orderItem;
 import static com.test.ecommerce.domain.product.entity.QProduct.product;
 
@@ -33,8 +33,8 @@ public class OrderQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     public Optional<Order> findByIdForUpdate(Long id) {
-        return Optional.ofNullable(queryFactory.selectFrom(orders)
-                .where(orders.id.eq(id))
+        return Optional.ofNullable(queryFactory.selectFrom(order)
+                .where(order.id.eq(id))
                 .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .fetchOne());
     }
@@ -42,14 +42,14 @@ public class OrderQueryRepository {
     public Page<OrderResponse> findByOrdersByUserId(OrderHistoryRequest request, Pageable pageable) {
         List<OrderResponse> content = queryFactory.select(Projections.constructor(
                         OrderResponse.class
-                        , orders.id
-                        , orders.createdAt
-                        , orders.orderStatus
+                        , order.id
+                        , order.createdAt
+                        , order.orderStatus
                         , product.productName
                         , orderItem.finalPrice
                         , orderItem.quantity
                 ))
-                .from(orders)
+                .from(order)
                 .leftJoin(orderItem)
                 .leftJoin(product)
                 .where(
@@ -61,8 +61,8 @@ public class OrderQueryRepository {
                 .orderBy(getOrderSpecifiers(pageable).toArray(OrderSpecifier[]::new))
                 .fetch();
 
-        JPAQuery<Long> countQuery = queryFactory.select(orders.count())
-                .from(orders)
+        JPAQuery<Long> countQuery = queryFactory.select(order.count())
+                .from(order)
                 .where(
                         userIdEq(request.getUserId())
                         , statusEq(request.getOrderStatus())
@@ -72,7 +72,7 @@ public class OrderQueryRepository {
     }
 
     private BooleanExpression userIdEq(Long userId) {
-        return userId != null ? orders.user.id.eq(userId) : null;
+        return userId != null ? order.user.id.eq(userId) : null;
     }
 
     private BooleanExpression statusEq(String statusCode) {
@@ -81,12 +81,12 @@ public class OrderQueryRepository {
         }
 
         OrderStatus status = OrderStatus.from(statusCode);
-        return orders.orderStatus.eq(status);
+        return order.orderStatus.eq(status);
     }
 
     private List<OrderSpecifier<?>> getOrderSpecifiers(Pageable pageable) {
         if (pageable.getSort().isEmpty()) {
-            return List.of(new OrderSpecifier<>(com.querydsl.core.types.Order.DESC, orders.createdAt));
+            return List.of(new OrderSpecifier<>(com.querydsl.core.types.Order.DESC, order.createdAt));
         }
 
         List<OrderSpecifier<?>> result = new ArrayList<>();
@@ -96,11 +96,11 @@ public class OrderQueryRepository {
                     ? com.querydsl.core.types.Order.ASC : com.querydsl.core.types.Order.DESC;
 
             OrderSpecifier<?> os = switch (sortOrder.getProperty()) {
-                case "orderDate" -> new OrderSpecifier<>(direction, orders.createdAt);
-                case "status"    -> new OrderSpecifier<>(direction, orders.orderStatus);
-                case "totalPrice" -> new OrderSpecifier<>(direction, orders.totalFinalPrice);
+                case "orderDate" -> new OrderSpecifier<>(direction, order.createdAt);
+                case "status"    -> new OrderSpecifier<>(direction, order.orderStatus);
+                case "totalPrice" -> new OrderSpecifier<>(direction, order.totalFinalPrice);
                 case "productName" -> new OrderSpecifier<>(direction, product.productName);
-                default -> new OrderSpecifier<>(com.querydsl.core.types.Order.DESC, orders.createdAt);
+                default -> new OrderSpecifier<>(com.querydsl.core.types.Order.DESC, order.createdAt);
             };
             result.add(os);
         }
