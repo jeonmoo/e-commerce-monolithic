@@ -1,7 +1,11 @@
 package com.test.ecommerce.domain.order.enums;
 
+import com.test.ecommerce.common.GlobalException;
+import com.test.ecommerce.common.exceptionCode.OrderExceptionCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
@@ -17,4 +21,11 @@ public enum OrderStatus {
 
     private final String status;
     private final String description;
+
+    public static OrderStatus from(String statusCode) {
+        return Arrays.stream(OrderStatus.values())
+                .filter(v -> v.name().equalsIgnoreCase(statusCode))
+                .findFirst()
+                .orElseThrow(() -> new GlobalException(OrderExceptionCode.NOT_FOUNT_STATUS));
+    }
 }

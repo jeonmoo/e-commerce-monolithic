@@ -13,6 +13,7 @@ public enum OrderExceptionCode implements ExceptionCode {
     INVALID_REFUND_REQUEST("INVALID_REFUND_REQUEST", "잘못된 환불요청 입니다."),
     NOT_REFUNDABLE_ORDER("NOT_REFUNDABLE_ORDER", "환불 할 수 없는 주문 입니다."),
     NOT_REFUNDABLE_ORDER_ITEM("NOT_REFUNDABLE_ORDER", "부분 환불 할 수 없는 주문 상세 입니다."),
+    NOT_FOUNT_STATUS("NOT_FOUNT_STATUS", "없는 주문 상태값 입니다.")
     ;
 
     private final String code;

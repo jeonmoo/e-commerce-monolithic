@@ -1,13 +1,18 @@
 package com.test.ecommerce.domain.user.controller;
 
 import com.test.ecommerce.common.ApiResponse;
+import com.test.ecommerce.domain.order.dto.OrderHistoryRequest;
 import com.test.ecommerce.domain.order.dto.OrderResponse;
+import com.test.ecommerce.domain.order.service.OrderService;
 import com.test.ecommerce.domain.user.dto.UserCreateRequest;
 import com.test.ecommerce.domain.user.dto.UserModifyRequest;
 import com.test.ecommerce.domain.user.dto.UserResponse;
 import com.test.ecommerce.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +24,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final OrderService orderService;
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponse>> getUser(@PathVariable Long id) {
@@ -39,8 +45,10 @@ public class UserController {
     }
 
     @GetMapping("/{id}/orders")
-    public ResponseEntity<ApiResponse<List<OrderResponse>>> getOrders(@PathVariable Long id) {
-        List<OrderResponse> result = userService.getOrderInUser(id);
+    public ResponseEntity<ApiResponse<Page<OrderResponse>>> getOrders(@PathVariable Long id,
+                                                                      @RequestBody OrderHistoryRequest request,
+                                                                      @ParameterObject Pageable pageable) {
+        Page<OrderResponse> result = orderService.getOrderInUser(id, request, pageable);
         return ApiResponse.success(result);
     }
 

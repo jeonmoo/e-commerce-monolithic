@@ -4,6 +4,7 @@ import com.test.ecommerce.common.GlobalException;
 import com.test.ecommerce.common.exceptionCode.OrderExceptionCode;
 import com.test.ecommerce.domain.order.dto.OrderCancelRequest;
 import com.test.ecommerce.domain.order.dto.OrderCreateRequest;
+import com.test.ecommerce.domain.order.dto.OrderHistoryRequest;
 import com.test.ecommerce.domain.order.dto.OrderResponse;
 import com.test.ecommerce.domain.order.entity.Order;
 import com.test.ecommerce.domain.order.entity.OrderItem;
@@ -12,6 +13,8 @@ import com.test.ecommerce.domain.order.repository.OrderQueryRepository;
 import com.test.ecommerce.domain.order.repository.OrderRepository;
 import com.test.ecommerce.domain.product.entity.Product;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +41,11 @@ public class OrderService {
     public OrderResponse getOrder(Long id) {
         Order order = findOrder(id);
         return orderSupportService.toResponse(order);
+    }
+
+    public Page<OrderResponse> getOrderInUser(Long userId, OrderHistoryRequest request, Pageable pageable) {
+        request.assignUserId(userId);
+        return orderQueryRepository.findByOrdersByUserId(request, pageable);
     }
 
     @Transactional

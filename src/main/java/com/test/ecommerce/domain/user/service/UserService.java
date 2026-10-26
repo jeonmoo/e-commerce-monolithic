@@ -58,20 +58,6 @@ public class UserService {
         return UserMapper.INSTANCE.toResponse(user);
     }
 
-    public List<OrderResponse> getOrderInUser(Long id) {
-        List<Order> orders = orderRepository.findByUserId(id);
-        return orders.stream()
-                .map(order -> {
-                    List<OrderResponse.OrderResponseItem> orderResponseItem = order.getOrderItems().stream()
-                            .map(OrderItemMapper.INSTANCE::toOrderResponseItem)
-                            .toList();
-
-                    OrderResponse orderResponse = OrderMapper.INSTANCE.toOrderResponse(order);
-                    orderResponse.setOrderItems(orderResponseItem);
-                    return orderResponse;
-                }).toList();
-    }
-
     public List<OrderResponse> getRefunds(Long userId) {
         List<Order> orders = orderRepository.findByUserIdAndOrderStatus(userId, OrderStatus.REFUNDED);
 

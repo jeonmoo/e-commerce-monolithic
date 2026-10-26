@@ -100,7 +100,7 @@ public class OrderSupportService {
         orderItems.forEach(item -> {
             Product product = productMap.get(item.getProductId());
             Integer stock = product.getQuantity();
-            if (stock < 1 && stock < item.getQuantity()) {
+            if (stock < 1 || stock < item.getQuantity()) {
                 throw new GlobalException(ProductExceptionCode.OUT_OF_STOCK);
             }
         });
